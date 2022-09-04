@@ -4,12 +4,7 @@ import Masonry from "react-masonry-css";
 import prisma from "../lib/db";
 import Link from "next/link";
 import { File, Project, User } from "@prisma/client";
-
-const breakpointColumnsObj = {
-  default: 3,
-  1023: 2,
-  639: 1,
-};
+import { ProjectGrid } from "../components/ProjectGrid";
 
 export type ProjectCardType = Project & {
   contributors: User[];
@@ -22,14 +17,8 @@ export default function Home({ projects }: { projects: ProjectCardType[] }) {
     console.log(session);
     return (
       <div className="px-4">
-        Signed in as {session.user?.email} <br />
-        <button onClick={() => signOut()}>Sign out</button>
         <div className="mx-auto max-w-md sm:max-w-7xl">
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className="masonry-grid"
-            columnClassName="masonry-grid-column"
-          >
+          <ProjectGrid>
             {projects.map((project) => {
               return (
                 <Link key={project.id} href={`/project/view/${project.id}`}>
@@ -39,7 +28,7 @@ export default function Home({ projects }: { projects: ProjectCardType[] }) {
                 </Link>
               );
             })}
-          </Masonry>
+          </ProjectGrid>
         </div>
       </div>
     );
