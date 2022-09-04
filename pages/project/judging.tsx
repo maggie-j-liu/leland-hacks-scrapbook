@@ -18,6 +18,7 @@ const JudgeProjects = ({
 }) => {
   const [choices, setChoices] = useState<any[]>([null, null, null]);
   const [options, setOptions] = useState(selectFormatted);
+  const [filtered, setFiltered] = useState<any[]>([]);
 
   return (
     <div className="px-4">
@@ -31,6 +32,7 @@ const JudgeProjects = ({
               value={choices[j]}
               options={options}
               onChange={(selectedOption) => {
+                const tempStore = choices[j];
                 let choicesCopy = choices;
                 choicesCopy[j] = selectedOption;
                 setChoices([...choicesCopy]);
@@ -38,6 +40,11 @@ const JudgeProjects = ({
                 let optionsCopy = options.filter(
                   (option: any) => option.value !== selectedOption.value
                 );
+
+                if (tempStore) {
+                  optionsCopy.push(tempStore);
+                }
+
                 setOptions([...optionsCopy]);
               }}
               className="w-full text-black"
