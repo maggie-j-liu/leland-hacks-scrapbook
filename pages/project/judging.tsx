@@ -6,6 +6,9 @@ import { ProjectCard } from "../../components/ProjectCard";
 import Select from "react-select";
 import { useState } from "react";
 
+const emojiData = ["🥇", "🥈", "🥉"];
+const textData = ["First", "Second", "Third"];
+
 const JudgeProjects = ({
   projects,
   selectFormatted,
@@ -13,49 +16,42 @@ const JudgeProjects = ({
   projects: ProjectCardType[];
   selectFormatted: any;
 }) => {
-  const [firstChoice, setFirstChoice] = useState(null);
-  const [secondChoice, setSecondChoice] = useState(null);
-  const [thirdChoice, setThirdChoice] = useState(null);
-
-  const [chosen, setChosen] = useState([]);
+  const [choices, setChoices] = useState<any[]>([null, null, null]);
+  const [options, setOptions] = useState(selectFormatted);
 
   return (
     <div className="px-4">
-      <div className="mx-auto max-w-md sm:max-w-7xl">
-        <div className="flex items-center space-x-2">
-          <p className="text-xl">🥇</p>
-          <Select
-            placeholder="First choice"
-            isSearchable={true}
-            options={selectFormatted}
-            onChange={(selectedOption) => {
-              setFirstChoice(selectedOption);
-            }}
-            className="text-black"
-          />
-        </div>
-        {firstChoice && (
-          <ProjectCard
-            project={
-              projects.filter((project) => {
-                return project.id === firstChoice?.value;
-              })[0]
-            }
-          />
-        )}
+      <div className="mx-auto max-w-md space-y-2 sm:max-w-7xl">
+        {choices.map((_, j) => (
+          <div className="flex items-center space-x-2">
+            <p className="text-2xl">{emojiData[j]}</p>
+            <Select
+              placeholder={`${textData[j]} choice`}
+              isSearchable={true}
+              value={choices[j]}
+              options={options}
+              onChange={(selectedOption) => {
+                let choicesCopy = choices;
+                choicesCopy[j] = selectedOption;
+                setChoices([...choicesCopy]);
 
-        {thirdChoice && (
-          <ProjectCard
-            project={
-              projects.filter((project) => {
-                return project.id === thirdChoice?.value;
-              })[0]
-            }
-          />
-        )}
+                let optionsCopy = options.filter(
+                  (option: any) => option.value !== selectedOption.value
+                );
+                setOptions([...optionsCopy]);
+              }}
+              className="w-full text-black"
+            />
+          </div>
+        ))}
+
         <ProjectGrid>
-          {projects.map((project) => {
-            return <ProjectCard project={project} />;
+          {choices.map((choice) => {
+            return projects.map((project) => {
+              if (project.id === (choice && choice.value)) {
+                return <ProjectCard project={project} />;
+              }
+            });
           })}
         </ProjectGrid>
       </div>
