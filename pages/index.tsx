@@ -1,39 +1,47 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import { ProjectCard } from "../components/ProjectCard";
-
 import Masonry from "react-masonry-css";
-
 import prisma from "../lib/db";
+import Link from "next/link";
+import { File, Project, User } from "@prisma/client";
 
 const breakpointColumnsObj = {
-  default: 2,
-  1100: 2,
-  700: 2,
-  500: 1,
+  default: 3,
+  1023: 2,
+  639: 1,
 };
 
-export default function Home({ projects }: { projects: any }) {
+export type ProjectCardType = Project & {
+  contributors: User[];
+  files: File[];
+};
+
+export default function Home({ projects }: { projects: ProjectCardType[] }) {
   const { data: session } = useSession();
   if (session) {
     console.log(session);
     return (
-      <>
+      <div className="px-4">
         Signed in as {session.user?.email} <br />
         <button onClick={() => signOut()}>Sign out</button>
-        <Masonry
-          breakpointCols={breakpointColumnsObj}
-          className="masonry-grid w-fit"
-          columnClassName="masonry-grid-column"
-        >
-          {projects.map((project: any) => {
-            return (
-              <a href={`/project/view/${project.id}`}>
-                <ProjectCard project={project} />
-              </a>
-            );
-          })}
-        </Masonry>
-      </>
+        <div className="mx-auto max-w-md sm:max-w-7xl">
+          <Masonry
+            breakpointCols={breakpointColumnsObj}
+            className="masonry-grid"
+            columnClassName="masonry-grid-column"
+          >
+            {projects.map((project) => {
+              return (
+                <Link key={project.id} href={`/project/view/${project.id}`}>
+                  <a>
+                    <ProjectCard project={project} />
+                  </a>
+                </Link>
+              );
+            })}
+          </Masonry>
+        </div>
+      </div>
     );
   }
   return (
@@ -44,7 +52,7 @@ export default function Home({ projects }: { projects: any }) {
   );
 }
 
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps() {
   let projects = await prisma.project.findMany({
     include: {
       contributors: true,
@@ -52,18 +60,6 @@ export async function getServerSideProps(context: any) {
     },
   });
 
-  for (const project in projects) {
-    projects[project].contributors = projects[project].contributors.map(
-      (contributor) => ({
-        id: "",
-        name: contributor.name,
-        username: contributor.username,
-        image: contributor.image,
-        email: "",
-        emailVerified: null,
-      })
-    );
-  }
   return {
     props: { projects }, // will be passed to the page component as props
   };
