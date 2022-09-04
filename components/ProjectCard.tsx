@@ -1,6 +1,6 @@
 import { Media } from "../pages/api/upload-files";
 
-interface ProjectCardProps {
+export interface ProjectCardProps {
   id: string;
   contributors: User[];
   files: Media[];
@@ -29,7 +29,7 @@ export const ProjectCard = ({ project }: { project: ProjectCardProps }) => {
         {project.contributors.map((contributor, i) => {
           return (
             <div key={i} className="group">
-              <img src={contributor.image} className=" h-8 w-8 rounded-full" />
+              <img src={contributor.image} className="h-8 w-8 rounded-full" />
 
               <div className="absolute mt-1 rounded-md bg-[#4E4C59] px-2 font-semibold opacity-0 transition ease-in-out group-hover:opacity-100">
                 @{contributor.username}
