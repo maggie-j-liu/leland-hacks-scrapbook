@@ -18,13 +18,13 @@ const JudgeProjects = ({
 }) => {
   const [choices, setChoices] = useState<any[]>([null, null, null]);
   const [options, setOptions] = useState(selectFormatted);
-  const [filtered, setFiltered] = useState<any[]>([]);
+  console.log(choices);
 
   return (
     <div className="px-4">
       <div className="mx-auto max-w-md space-y-2 sm:max-w-7xl">
         {choices.map((_, j) => (
-          <div className="flex items-center space-x-2">
+          <div key={j} className="flex items-center space-x-2">
             <p className="text-2xl">{emojiData[j]}</p>
             <Select
               placeholder={`${textData[j]} choice`}
@@ -53,12 +53,22 @@ const JudgeProjects = ({
         ))}
 
         <ProjectGrid>
-          {choices.map((choice) => {
-            return projects.map((project) => {
-              if (project.id === (choice && choice.value)) {
-                return <ProjectCard project={project} />;
-              }
-            });
+          {choices.map((choice, i) => {
+            if (choice === null) {
+              return (
+                <ProjectCard
+                  key={i}
+                  project={{
+                    title: `Your ${textData[i]} choice`,
+                    description: "",
+                    contributors: [],
+                    files: [],
+                  }}
+                />
+              );
+            }
+            const project = projects.find((p) => p.id === choice.value);
+            return <ProjectCard key={i} project={project!} />;
           })}
         </ProjectGrid>
       </div>

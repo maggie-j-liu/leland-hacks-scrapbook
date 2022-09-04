@@ -12,32 +12,16 @@ export type ProjectCardType = Project & {
 };
 
 export default function Home({ projects }: { projects: ProjectCardType[] }) {
-  const { data: session } = useSession();
-  if (session) {
-    console.log(session);
-    return (
-      <div className="px-4">
-        <div className="mx-auto max-w-md sm:max-w-7xl">
-          <ProjectGrid>
-            {projects.map((project) => {
-              return (
-                <Link key={project.id} href={`/project/view/${project.id}`}>
-                  <a>
-                    <ProjectCard project={project} />
-                  </a>
-                </Link>
-              );
-            })}
-          </ProjectGrid>
-        </div>
-      </div>
-    );
-  }
   return (
-    <>
-      Not signed in <br />
-      <button onClick={() => signIn()}>Sign in</button>
-    </>
+    <div className="px-4">
+      <div className="mx-auto max-w-md sm:max-w-7xl">
+        <ProjectGrid>
+          {projects.map((project) => {
+            return <ProjectCard key={project.id} project={project} />;
+          })}
+        </ProjectGrid>
+      </div>
+    </div>
   );
 }
 

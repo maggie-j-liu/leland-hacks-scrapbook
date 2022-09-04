@@ -1,13 +1,12 @@
-import { ProjectCardType } from "../pages";
-import { Media } from "../pages/api/upload-files";
-import remarkGfm from "remark-gfm";
 import Markdown from "./Markdown";
 import { File, User } from "@prisma/client";
+import Link from "next/link";
 
 export const ProjectCard = ({
   project,
 }: {
   project: {
+    id?: string;
     title: string;
     description: string;
     contributors: Omit<User, "email" | "emailVerified">[];
@@ -16,7 +15,18 @@ export const ProjectCard = ({
 }) => {
   return (
     <div className="mb-4 w-full space-y-4 rounded-lg p-6 dark:bg-gray-800">
-      <h3 className="text-center text-xl font-semibold">{project.title}</h3>
+      {"id" in project ? (
+        <Link href={`/project/view/${project.id}`}>
+          <a>
+            <h2 className="text-center text-xl font-semibold hover:underline">
+              {project.title}
+            </h2>
+          </a>
+        </Link>
+      ) : (
+        <h2 className="text-center text-xl font-semibold">{project.title}</h2>
+      )}
+
       {/* {JSON.stringify(project)} */}
       <Markdown>{project.description}</Markdown>
       {project.files.map((file) => {

@@ -6,10 +6,13 @@ export const Navbar = () => {
 
   return (
     <div className="mb-6 flex justify-between px-4 py-2">
-      <div className="flex items-center space-x-4">
-        <img src="/lelandhacks.svg" className="h-auto w-10" />
-        <h3 className="text-xl font-extrabold">Submissions</h3>
-      </div>
+      <Link href="/">
+        <a className="flex items-center space-x-4">
+          <img src="/lelandhacks.svg" className="h-auto w-10" />
+          <h3 className="text-xl font-extrabold">Submissions</h3>
+        </a>
+      </Link>
+
       <div className="flex items-center space-x-6">
         <Link href="/project/create">
           <a>Create Post</a>

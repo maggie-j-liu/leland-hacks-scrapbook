@@ -1,6 +1,6 @@
 import remarkGfm from "remark-gfm";
 import ReactMarkdown from "react-markdown";
-import components from "./MarkdownComponents";
+import remarkBreaks from "remark-breaks";
 
 const proseClasses = [
   "prose-headings:mt-0 prose-headings:mb-4 prose-headings:text-[length:inherit] prose-headings:font-semibold",
@@ -18,8 +18,7 @@ const Markdown = ({ children }: { children: string }) => {
       className={`${proseClasses.join(
         " "
       )} prose leading-normal prose-p:mb-2 prose-ul:my-2 prose-hr:my-8 dark:prose-invert`}
-      remarkPlugins={[remarkGfm]}
-      components={components}
+      remarkPlugins={[remarkGfm, remarkBreaks]}
     >
       {children}
     </ReactMarkdown>

@@ -1,6 +1,4 @@
 import prisma from "../../../lib/db";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { ProjectCardType } from "../..";
 import Markdown from "../../../components/Markdown";
 
