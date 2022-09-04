@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import { File } from "@prisma/client";
 import ContributorCard from "../../components/ContributorCard";
 import { ProjectCard } from "../../components/ProjectCard";
+import { useRouter } from "next/router";
 
 interface Contributor {
   id: string;
@@ -17,6 +18,7 @@ const CreateProject = () => {
   const [contributors, setContributors] = useState<Contributor[]>([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const router = useRouter();
 
   const { data: session, status } = useSession();
 
@@ -190,6 +192,7 @@ const CreateProject = () => {
             onClick={(e) => {
               e.preventDefault();
               createProject();
+              router.push("/");
             }}
           >
             Submit
