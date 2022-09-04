@@ -1,4 +1,5 @@
 import { useSession, signIn, signOut } from "next-auth/react";
+import { ProjectCard } from "../components/ProjectCard";
 import prisma from "../lib/db";
 export default function Home({ projects }: { projects: any }) {
   const { data: session } = useSession();
@@ -9,7 +10,7 @@ export default function Home({ projects }: { projects: any }) {
         Signed in as {session.user?.email} <br />
         <button onClick={() => signOut()}>Sign out</button>
         {projects.map((project: any) => {
-          return <div>{project.title}</div>;
+          return <ProjectCard project={project} />;
         })}
       </>
     );
@@ -26,6 +27,7 @@ export async function getServerSideProps(context: any) {
   let projects = await prisma.project.findMany({
     include: {
       contributors: true,
+      files: true,
     },
   });
 

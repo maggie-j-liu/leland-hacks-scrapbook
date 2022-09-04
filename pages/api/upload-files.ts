@@ -19,7 +19,7 @@ cloudinary.v2.config({
   secure: true,
 });
 
-interface Media {
+export interface Media {
   url: string;
   mediaType: string;
 }
