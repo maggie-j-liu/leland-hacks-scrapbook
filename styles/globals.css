@@ -4,15 +4,14 @@
 @tailwind utilities;
 
 @layer base {
-  body {
+  body.dark {
     @apply bg-gray-900 text-white;
   }
 
-  :root {
+  .dark:root {
     color-scheme: dark;
   }
 }
-
 
 .masonry-grid {
   display: -webkit-box; /* Not needed if autoprefixing */
@@ -28,6 +27,7 @@
 }
 
 /* Style your items */
-.masonry-grid-column > div { /* change div to reference your elements you put in <Masonry> */
+.masonry-grid-column > div {
+  /* change div to reference your elements you put in <Masonry> */
   margin-bottom: 30px;
 }

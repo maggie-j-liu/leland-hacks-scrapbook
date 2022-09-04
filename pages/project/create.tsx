@@ -14,7 +14,7 @@ const ContributorCard = ({
   onDelete?: Function;
 }) => {
   return (
-    <div className="mx-auto flex max-w-4xl items-center justify-between rounded-lg px-4 py-2 hover:bg-gray-800">
+    <div className="mx-auto flex max-w-4xl items-center justify-between rounded-lg px-4 py-2 dark:hover:bg-gray-800">
       <div className="flex items-center space-x-4">
         <img
           alt={`@${username}'s profile picture`}

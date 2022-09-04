@@ -1,23 +1,26 @@
-import { ProjectCardProps } from "../../../components/ProjectCard";
 import prisma from "../../../lib/db";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { ProjectCardType } from "../..";
 
-const ViewProject = ({ project }: { project: ProjectCardProps }) => {
+const ViewProject = ({ project }: { project: ProjectCardType }) => {
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-4 md:p-6 lg:p-8">
       <h1 className="text-5xl font-black">{project.title}</h1>
 
       <div className="flex items-center space-x-6 overflow-y-auto">
         {project.files?.map((file) => {
-          return <img src={file.url} className="max-h-xl max-h-40" />;
+          return (
+            <img key={file.url} src={file.url} className="max-h-xl max-h-40" />
+          );
         })}
       </div>
       <ReactMarkdown
-        children={project.description}
         remarkPlugins={[remarkGfm]}
-        className="prose text-white prose-headings:text-white"
-      />
+        className="prose dark:prose-invert"
+      >
+        {project.description}
+      </ReactMarkdown>
     </div>
   );
 };
