@@ -21,11 +21,14 @@ interface User {
 
 export const ProjectCard = ({ project }: { project: ProjectCardProps }) => {
   return (
-    <div className="w-fit space-y-4 rounded-lg bg-gray-800 p-6">
-      <h3 className="text-xl font-semibold">{project.title}</h3>
+    <div className="w-auto space-y-4 rounded-lg bg-gray-800 p-6">
+      <h3 className="text-center text-xl font-semibold">{project.title}</h3>
       {/* {JSON.stringify(project)} */}
-      <img src={project.files[0].url} className="max-w-lg rounded-lg" />
-      <div className="flex space-x-2">
+      <img
+        src={project.files[0].url}
+        className="mx-auto w-full max-w-lg rounded-lg"
+      />
+      <div className="flex justify-center space-x-2">
         {project.contributors.map((contributor, i) => {
           return (
             <div key={i} className="group">

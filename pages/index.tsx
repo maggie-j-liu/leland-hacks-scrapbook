@@ -6,8 +6,8 @@ import Masonry from "react-masonry-css";
 import prisma from "../lib/db";
 
 const breakpointColumnsObj = {
-  default: 2,
-  1100: 2,
+  default: 4,
+  1100: 3,
   700: 2,
   500: 1,
 };
@@ -22,14 +22,16 @@ export default function Home({ projects }: { projects: any }) {
         <button onClick={() => signOut()}>Sign out</button>
         <Masonry
           breakpointCols={breakpointColumnsObj}
-          className="masonry-grid w-fit"
+          className="masonry-grid w-full"
           columnClassName="masonry-grid-column"
         >
           {projects.map((project: any) => {
             return (
-              <a href={`/project/view/${project.id}`}>
-                <ProjectCard project={project} />
-              </a>
+              <div>
+                <a href={`/project/view/${project.id}`}>
+                  <ProjectCard project={project} />
+                </a>
+              </div>
             );
           })}
         </Masonry>
