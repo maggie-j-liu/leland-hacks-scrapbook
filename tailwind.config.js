@@ -13,7 +13,11 @@ module.exports = {
         secondary: colors.blue,
       },
       fontFamily: {
-        sans: ['"League Spartan"', ...defaultTheme.fontFamily.sans],
+        sans: [
+          "Jetbrains Mono",
+          '"League Spartan"',
+          ...defaultTheme.fontFamily.sans,
+        ],
       },
     },
   },
