@@ -4,6 +4,7 @@ import Link from "next/link";
 
 export const ProjectCard = ({
   project,
+  className = "",
 }: {
   project: {
     id?: string;
@@ -12,12 +13,15 @@ export const ProjectCard = ({
     contributors: Omit<User, "email" | "emailVerified">[];
     files: File[];
   };
+  className?: string;
 }) => {
   return (
-    <div className="mb-4 w-full space-y-4 rounded-lg p-6 dark:bg-gray-800">
+    <div
+      className={`${className} mb-4 w-full space-y-4 rounded-lg p-6 dark:bg-gray-800`}
+    >
       {"id" in project ? (
         <Link href={`/project/view/${project.id}`}>
-          <a>
+          <a className="mx-auto block w-fit">
             <h2 className="text-center text-xl font-semibold hover:underline">
               {project.title}
             </h2>

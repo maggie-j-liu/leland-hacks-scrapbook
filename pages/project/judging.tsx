@@ -8,6 +8,11 @@ import { useState } from "react";
 
 const emojiData = ["🥇", "🥈", "🥉"];
 const textData = ["First", "Second", "Third"];
+const borderColors = [
+  "border-yellow-400",
+  "border-gray-400",
+  "border-yellow-700",
+];
 
 const JudgeProjects = ({
   projects,
@@ -22,55 +27,68 @@ const JudgeProjects = ({
 
   return (
     <div className="px-4">
-      <div className="mx-auto max-w-md space-y-2 sm:max-w-7xl">
-        {choices.map((_, j) => (
-          <div key={j} className="flex items-center space-x-2">
-            <p className="text-2xl">{emojiData[j]}</p>
-            <Select
-              placeholder={`${textData[j]} choice`}
-              isSearchable={true}
-              value={choices[j]}
-              options={options}
-              onChange={(selectedOption) => {
-                const tempStore = choices[j];
-                let choicesCopy = choices;
-                choicesCopy[j] = selectedOption;
-                setChoices([...choicesCopy]);
+      <div className="mx-auto max-w-md sm:max-w-7xl">
+        <div className="space-y-2">
+          {choices.map((_, j) => (
+            <div key={j} className="flex items-center space-x-2">
+              <p className="text-2xl">{emojiData[j]}</p>
+              <Select
+                classNamePrefix="react-select"
+                placeholder={`${textData[j]} choice`}
+                isSearchable={true}
+                value={choices[j]}
+                options={options}
+                onChange={(selectedOption) => {
+                  const tempStore = choices[j];
+                  let choicesCopy = choices;
+                  choicesCopy[j] = selectedOption;
+                  setChoices([...choicesCopy]);
 
-                let optionsCopy = options.filter(
-                  (option: any) => option.value !== selectedOption.value
-                );
+                  let optionsCopy = options.filter(
+                    (option: any) => option.value !== selectedOption.value
+                  );
 
-                if (tempStore) {
-                  optionsCopy.push(tempStore);
-                }
+                  if (tempStore) {
+                    optionsCopy.push(tempStore);
+                  }
 
-                setOptions([...optionsCopy]);
-              }}
-              className="w-full text-black"
-            />
-          </div>
-        ))}
+                  setOptions([...optionsCopy]);
+                }}
+                className="w-full"
+              />
+            </div>
+          ))}
+        </div>
 
-        <ProjectGrid>
-          {choices.map((choice, i) => {
-            if (choice === null) {
+        <div className="mt-8">
+          <ProjectGrid>
+            {choices.map((choice, i) => {
               return (
-                <ProjectCard
-                  key={i}
-                  project={{
-                    title: `Your ${textData[i]} choice`,
-                    description: "",
-                    contributors: [],
-                    files: [],
-                  }}
-                />
+                <div className="relative rounded-lg " key={i}>
+                  <div className="absolute origin-top -rotate-[20deg] text-5xl duration-300 hover:rotate-[20deg] hover:duration-100">
+                    {emojiData[i]}
+                  </div>
+                  {choice === null ? (
+                    <ProjectCard
+                      className={`border-4 ${borderColors[i]}`}
+                      project={{
+                        title: `Your ${textData[i]} choice`,
+                        description: "",
+                        contributors: [],
+                        files: [],
+                      }}
+                    />
+                  ) : (
+                    <ProjectCard
+                      className={`border-4 ${borderColors[i]}`}
+                      project={projects.find((p) => p.id === choice.value)!}
+                    />
+                  )}
+                </div>
               );
-            }
-            const project = projects.find((p) => p.id === choice.value);
-            return <ProjectCard key={i} project={project!} />;
-          })}
-        </ProjectGrid>
+            })}
+          </ProjectGrid>
+        </div>
       </div>
     </div>
   );
