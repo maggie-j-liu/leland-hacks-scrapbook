@@ -2,6 +2,7 @@ import { HiOutlineTrash } from "react-icons/hi";
 import { FileUploader } from "react-drag-drop-files";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { File } from "@prisma/client";
 
 const ContributorCard = ({
   username,
@@ -18,7 +19,7 @@ const ContributorCard = ({
         <img
           alt={`@${username}'s profile picture`}
           src={image}
-          className="h-12 w-12"
+          className="h-12 w-12 rounded-full"
           referrerPolicy="no-referrer"
         />
         <div className="space-y py-2">
@@ -50,13 +51,14 @@ interface Contributor {
   image: string;
 }
 const CreateProject = () => {
-  const [files, setFiles] = useState<any>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const [contributorSearch, setContributorSearch] = useState("");
   const [contributorSearchError, setContributorSearchError] = useState("");
   const [contributors, setContributors] = useState<Contributor[]>([]);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
   const { data: session, status } = useSession();
-  console.log(session);
 
   const searchForUser = async () => {
     if (contributorSearch.length === 0) {
@@ -97,6 +99,21 @@ const CreateProject = () => {
     setContributors((cList) => cList.filter((c) => c.id !== contributorId));
   };
 
+  const createProject = async () => {
+    await fetch("/api/create-project", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title,
+        description,
+        contributors: contributors.map((c) => c.id),
+        files,
+      }),
+    });
+  };
+
   if (status === "loading") {
     return null;
   }
@@ -114,6 +131,8 @@ const CreateProject = () => {
           type="text"
           name="title"
           className="rounded-lg border border-primary-300 px-2 py-1"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
       </div>
 
@@ -124,6 +143,8 @@ const CreateProject = () => {
         <textarea
           name="description"
           className="rounded-lg border border-primary-300 px-2 py-1"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
       </div>
 
@@ -167,16 +188,14 @@ const CreateProject = () => {
           })}
         </div>
       </div>
-      {/* <FileUploader
-        name="file"
-        handleChange={(file: any) => {
-          files.length > 0 ? setFiles([...files, file]) : setFiles([file]);
-          console.log(file, files);
-        }}
-        multiple
-        types={["JPG", "PNG", "GIF", "MP4"]}
-        classes="mx-auto"
-      /> */}
+
+      {files.map((file: any) => {
+        return (
+          <div key={file.url}>
+            <img src={file.url} alt="uploaded image" />
+          </div>
+        );
+      })}
 
       <input
         name="image"
@@ -184,22 +203,35 @@ const CreateProject = () => {
         className="mx-auto"
         accept="image/*, video*/"
         multiple
-        onChange={(e) => {
+        onChange={async (e) => {
           if (e.target.files) {
             const fd = new FormData();
-            Array.from(e.target.files).forEach((file) => {
-              fd.append("files", file);
+            Array.from(e.target.files).forEach((file, i) => {
+              fd.append(file.name, file);
             });
 
-            fetch("/api/upload-files", {
+            const media = await fetch("/api/upload-files", {
               method: "POST",
               body: fd,
             });
 
-            console.log(e.target.files);
+            console.log(JSON.stringify(fd));
+            const newFiles = await media.json();
+            setFiles((f) => [...f, ...newFiles]);
+
+            // console.log(e.target.files);
           }
         }}
       />
+      <button
+        type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          createProject();
+        }}
+      >
+        Submit
+      </button>
     </div>
   );
 };

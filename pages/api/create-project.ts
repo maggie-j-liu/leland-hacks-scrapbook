@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "./auth/[...nextauth]";
 import cloudinary from "cloudinary";
+import { File } from "@prisma/client";
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_NAME,
@@ -52,9 +53,14 @@ export default async function handler(
           ...contributors.map((c: string) => ({ id: c })),
         ],
       },
-      files,
+      files: {
+        create: files.map((file: File) => ({
+          url: file.url,
+          mediaType: file.mediaType,
+        })),
+      },
     },
   });
 
-  res.status(200).json({ name: "John Doe" });
+  res.end();
 }

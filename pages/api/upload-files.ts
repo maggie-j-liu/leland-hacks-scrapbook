@@ -39,33 +39,29 @@ export default async function handler(
     });
   });
 
-  let { files } = data;
-
-  if (!Array.isArray(files)) {
-    files = [files];
-  }
-
-  console.log(JSON.stringify(files));
+  let { files } = data as any;
 
   let media: Media[] = [];
-  for (const file of files) {
-    console.log(file);
-    cloudinary.v2.uploader.upload(
-      file.files.path,
 
-      async function (error: any, result: any) {
-        console.log(result, error);
+  const cloudinaryPromises = [];
+  for (const [fileName, file] of Object.entries(files)) {
+    console.log(file);
+    const promise = cloudinary.v2.uploader.upload(
+      (file as { filepath: string }).filepath,
+
+      function (error: any, result: any) {
+        // console.log(result, error);
 
         if (!error) {
           media.push({ url: result.url, mediaType: result.resource_type });
-          res.redirect("/");
         }
       }
     );
+    cloudinaryPromises.push(promise);
   }
 
+  await Promise.all(cloudinaryPromises);
   res.json(media);
 
-  // console.log(files, req.body);
-  res.end();
+  // res.end();
 }

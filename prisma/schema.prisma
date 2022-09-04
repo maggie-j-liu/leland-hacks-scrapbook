@@ -59,11 +59,18 @@ model VerificationToken {
 }
 
 model Project {
-  id           String   @id @default(cuid())
+  id           String  @id @default(cuid())
   contributors User[]
-  files        String[]
+  files        File[]
   description  String
   title        String
   demo         String?
   github       String?
+}
+
+model File {
+  url       String   @unique
+  mediaType String
+  project   Project? @relation(fields: [projectId], references: [id])
+  projectId String?
 }
