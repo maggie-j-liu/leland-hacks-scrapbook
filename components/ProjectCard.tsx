@@ -4,7 +4,7 @@ import { Media } from "../pages/api/upload-files";
 export const ProjectCard = ({ project }: { project: ProjectCardType }) => {
   return (
     <div className="mb-4 w-full space-y-4 rounded-lg bg-gray-800 p-6">
-      <h3 className="text-xl font-semibold">{project.title}</h3>
+      <h3 className="text-center text-xl font-semibold">{project.title}</h3>
       {/* {JSON.stringify(project)} */}
       <img
         alt="project image"
