@@ -1,11 +1,9 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../../lib/db";
 
-const prisma = new PrismaClient();
-
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
@@ -13,4 +11,35 @@ export default NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
   ],
-});
+  callbacks: {
+    async session({ session, token, user }) {
+      session.user.id = user.id;
+      session.user.username = user.username as string;
+      return session;
+    },
+  },
+  events: {
+    async createUser({ user }) {
+      console.log("user created", user);
+      let username = user.name?.replace(/\s/g, "").toLowerCase();
+      try {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            username,
+          },
+        });
+      } catch (e) {
+        username += Math.floor(1000 + Math.random() * 9000).toString();
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            username,
+          },
+        });
+      }
+    },
+  },
+};
+
+export default NextAuth(authOptions);

@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -40,11 +41,13 @@ model Session {
 model User {
   id            String    @id @default(cuid())
   name          String?
+  username      String?   @unique
   email         String?   @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
+  projects      Project[]
 }
 
 model VerificationToken {
@@ -53,4 +56,14 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Project {
+  id           String   @id @default(cuid())
+  contributors User[]
+  files        String[]
+  description  String
+  title        String
+  demo         String?
+  github       String?
 }
