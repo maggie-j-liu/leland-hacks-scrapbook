@@ -2,6 +2,7 @@ import prisma from "../../../lib/db";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ProjectCardType } from "../..";
+import Markdown from "../../../components/Markdown";
 
 const ViewProject = ({ project }: { project: ProjectCardType }) => {
   return (
@@ -15,12 +16,7 @@ const ViewProject = ({ project }: { project: ProjectCardType }) => {
           );
         })}
       </div>
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        className="prose dark:prose-invert"
-      >
-        {project.description}
-      </ReactMarkdown>
+      <Markdown>{project.description}</Markdown>
     </div>
   );
 };
