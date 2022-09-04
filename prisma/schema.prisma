@@ -59,13 +59,14 @@ model VerificationToken {
 }
 
 model Project {
-  id           String  @id @default(cuid())
+  id           String   @id @default(cuid())
   contributors User[]
   files        File[]
   description  String
   title        String
   demo         String?
   github       String?
+  createdAt    DateTime @default(now())
 }
 
 model File {

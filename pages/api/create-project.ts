@@ -36,8 +36,8 @@ export default async function handler(
     return;
   }
 
-  if (req.body.contributors.length == 0 || req.body.files.length == 0) {
-    res.status(400).send("Contributors and files must not be empty");
+  if (req.body.files.length == 0) {
+    res.status(400).send("Files must not be empty");
     return;
   }
 

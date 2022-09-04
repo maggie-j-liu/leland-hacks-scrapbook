@@ -1,49 +1,9 @@
-import { HiOutlineTrash } from "react-icons/hi";
-import { FileUploader } from "react-drag-drop-files";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { File } from "@prisma/client";
+import ContributorCard from "../../components/ContributorCard";
+import { ProjectCard } from "../../components/ProjectCard";
 
-const ContributorCard = ({
-  username,
-  image,
-  onDelete,
-}: {
-  username: string;
-  image: string;
-  onDelete?: Function;
-}) => {
-  return (
-    <div className="mx-auto flex max-w-4xl items-center justify-between rounded-lg px-4 py-2 dark:hover:bg-gray-800">
-      <div className="flex items-center space-x-4">
-        <img
-          alt={`@${username}'s profile picture`}
-          src={image}
-          className="h-12 w-12 rounded-full"
-          referrerPolicy="no-referrer"
-        />
-        <div className="space-y py-2">
-          <p className="font-medium">@{username}</p>
-        </div>
-      </div>
-      {onDelete ? (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            onDelete();
-          }}
-        >
-          <HiOutlineTrash
-            size={20}
-            color="red"
-            className="transition ease-in-out hover:-translate-y-1"
-          />
-        </button>
-      ) : null}
-    </div>
-  );
-};
 interface Contributor {
   id: string;
   name: string;
@@ -122,116 +82,143 @@ const CreateProject = () => {
   }
 
   return (
-    <div className="space-y-8 p-8">
-      <div className="space-y flex flex-col">
-        <label htmlFor="title" className="font-semibold">
-          Title of Project
-        </label>
-        <input
-          type="text"
-          name="title"
-          className="rounded-lg border border-primary-300 px-2 py-1"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </div>
+    <div className="px-4">
+      <div className="mx-auto flex max-w-7xl flex-col gap-x-8 lg:flex-row">
+        <div className="flex-grow space-y-8">
+          <div className="flex flex-col">
+            <label htmlFor="title" className="font-semibold">
+              Title of Project
+            </label>
+            <input
+              type="text"
+              name="title"
+              className="rounded-lg border-2 border-primary-300 px-2 py-1 dark:bg-gray-800"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </div>
 
-      <div className="space-y flex flex-col">
-        <label htmlFor="description" className="font-semibold">
-          Description
-        </label>
-        <textarea
-          name="description"
-          className="rounded-lg border border-primary-300 px-2 py-1"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-      </div>
+          <div className="space-y flex flex-col">
+            <label htmlFor="description" className="font-semibold">
+              Description
+            </label>
+            <textarea
+              name="description"
+              className="rounded-lg border-2 border-primary-300 px-2 py-1 dark:bg-gray-800"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
 
-      <div className="space-y-4">
-        <div className="space-y flex flex-col">
-          <label htmlFor="contributors" className="font-semibold">
-            Contributors
-          </label>
+          <div className="space-y-4">
+            <div className="space-y flex flex-col">
+              <label htmlFor="contributors" className="font-semibold">
+                Contributors
+              </label>
+              <input
+                name="contributors"
+                type="text"
+                value={contributorSearch}
+                onChange={(e) => setContributorSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    searchForUser();
+                  }
+                }}
+                placeholder="Type project member's username here"
+                className="rounded-lg border-2 border-primary-300 px-2 py-1 dark:bg-gray-800"
+              />
+              {contributorSearchError.length > 0 ? (
+                <p>{contributorSearchError}</p>
+              ) : null}
+            </div>
+
+            <div className="space-y-4">
+              <ContributorCard
+                username={session!.user.username}
+                image={session!.user.image}
+              />
+              {contributors.map((contributor) => {
+                return (
+                  <ContributorCard
+                    {...contributor}
+                    key={contributor.id}
+                    onDelete={() => removeContributor(contributor.id)}
+                  />
+                );
+              })}
+            </div>
+          </div>
+
           <input
-            name="contributors"
-            type="text"
-            value={contributorSearch}
-            onChange={(e) => setContributorSearch(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                searchForUser();
+            name="image"
+            type="file"
+            className="mx-auto block w-full"
+            accept="image/*, video*/"
+            multiple
+            onChange={async (e) => {
+              if (e.target.files) {
+                const fd = new FormData();
+                Array.from(e.target.files).forEach((file, i) => {
+                  fd.append(file.name, file);
+                });
+
+                const media = await fetch("/api/upload-files", {
+                  method: "POST",
+                  body: fd,
+                });
+
+                const newFiles = await media.json();
+                setFiles((f) => [...f, ...newFiles]);
+                e.target.value = "";
+                // console.log(e.target.files);
               }
             }}
-            placeholder="Type project member's username here"
-            className="rounded-lg border border-primary-300 px-2 py-1"
           />
-          {contributorSearchError.length > 0 ? (
-            <p>{contributorSearchError}</p>
-          ) : null}
-        </div>
 
-        <div className="space-y-4">
-          <ContributorCard
-            username={session!.user.username}
-            image={session!.user.image}
-          />
-          {contributors.map((contributor) => {
+          {files.map((file: any) => {
             return (
-              <ContributorCard
-                {...contributor}
-                key={contributor.id}
-                onDelete={() => removeContributor(contributor.id)}
-              />
+              <div key={file.url}>
+                <img className="w-32" src={file.url} alt="uploaded image" />
+              </div>
             );
           })}
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              createProject();
+            }}
+          >
+            Submit
+          </button>
+        </div>
+
+        <div className="w-full max-w-md">
+          <ProjectCard
+            project={{
+              title: title.length > 0 ? title : "[Your title here!]",
+              description:
+                description.length > 0
+                  ? description
+                  : `Your description here!
+Markdown is supported.
+
+Use \`#\` to create headings, like so:
+# Heading 1
+
+You can also \\*\\***bold**\\*\\*, \\**italicize*\\*, and \\~\\~~~strikethrough~~\\~\\~ text.
+
+Add links like this: \\[[Leland Hacks Website](https://lelandhacks.com)\\](https://lelandhacks.com)
+`,
+              contributors: [session!.user, ...contributors],
+              files,
+            }}
+          />
         </div>
       </div>
-
-      {files.map((file: any) => {
-        return (
-          <div key={file.url}>
-            <img src={file.url} alt="uploaded image" />
-          </div>
-        );
-      })}
-
-      <input
-        name="image"
-        type="file"
-        className="mx-auto"
-        accept="image/*, video*/"
-        multiple
-        onChange={async (e) => {
-          if (e.target.files) {
-            const fd = new FormData();
-            Array.from(e.target.files).forEach((file, i) => {
-              fd.append(file.name, file);
-            });
-
-            const media = await fetch("/api/upload-files", {
-              method: "POST",
-              body: fd,
-            });
-
-            console.log(JSON.stringify(fd));
-            const newFiles = await media.json();
-            setFiles((f) => [...f, ...newFiles]);
-
-            // console.log(e.target.files);
-          }
-        }}
-      />
-      <button
-        type="button"
-        onClick={(e) => {
-          e.preventDefault();
-          createProject();
-        }}
-      >
-        Submit
-      </button>
     </div>
   );
 };
