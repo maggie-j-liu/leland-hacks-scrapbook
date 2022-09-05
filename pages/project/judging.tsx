@@ -36,6 +36,7 @@ const JudgeProjects = ({
                 classNamePrefix="react-select"
                 placeholder={`${textData[j]} choice`}
                 isSearchable={true}
+                isClearable={true}
                 value={choices[j]}
                 options={options}
                 onChange={(selectedOption) => {
