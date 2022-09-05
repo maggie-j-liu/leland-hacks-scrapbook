@@ -1,5 +1,6 @@
-import { useSession } from "next-auth/react";
+import { useSession, signOut, signIn } from "next-auth/react";
 import Link from "next/link";
+import ProfilePicture from "./ProfilePicture";
 
 export const Navbar = () => {
   const { data: session, status } = useSession();
@@ -23,13 +24,40 @@ export const Navbar = () => {
             </a>
           </Link>
           <div className="flex items-center space-x-2 rounded-lg py-1 px-2 dark:bg-gray-700 sm:space-x-3 sm:px-3">
-            <img src={session?.user.image} className="h-8 w-8 rounded-full" />
-            <div>
-              <p className="font-extrabold dark:text-white">
-                {session?.user.name}
-              </p>
-              <p className="text-xs font-bold">@{session?.user.username}</p>
-            </div>
+            {status === "loading" ? null : status === "unauthenticated" ? (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  signIn("google");
+                }}
+              >
+                Sign In
+              </button>
+            ) : (
+              <>
+                <ProfilePicture
+                  username={session!.user.username}
+                  image={session!.user.image}
+                  className="w-8"
+                />
+                <div>
+                  <p className="font-extrabold dark:text-white">
+                    {session?.user.name}
+                  </p>
+                  <p className="text-xs font-bold">@{session?.user.username}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    signOut();
+                  }}
+                >
+                  Sign Out
+                </button>
+              </>
+            )}
           </div>
         </div>
       </nav>

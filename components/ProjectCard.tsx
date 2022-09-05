@@ -2,6 +2,7 @@ import Markdown from "./Markdown";
 import { File, User } from "@prisma/client";
 import Link from "next/link";
 import Image from "next/image";
+import ProfilePicture from "./ProfilePicture";
 
 export const ProjectCard = ({
   project,
@@ -51,10 +52,10 @@ export const ProjectCard = ({
         {project.contributors.map((contributor, i) => {
           return (
             <div key={i}>
-              <img
-                alt={`@${contributor.username}'s profile picture`}
-                src={contributor.image!}
-                className="peer h-8 w-8 rounded-full"
+              <ProfilePicture
+                username={contributor.username!}
+                image={contributor.image!}
+                className="peer w-8"
               />
               <div className="absolute mt-1 -translate-x-[calc(50%-1rem)] rounded-md px-2 font-semibold opacity-0 transition ease-in-out peer-hover:opacity-100 dark:bg-[#4E4C59]">
                 @{contributor.username}

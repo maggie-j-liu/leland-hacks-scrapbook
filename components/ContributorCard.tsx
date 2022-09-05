@@ -1,4 +1,5 @@
 import { HiOutlineTrash } from "react-icons/hi";
+import ProfilePicture from "./ProfilePicture";
 
 const ContributorCard = ({
   username,
@@ -12,12 +13,7 @@ const ContributorCard = ({
   return (
     <div className="mx-auto flex max-w-4xl items-center justify-between rounded-lg px-3 py-2 dark:bg-gray-700">
       <div className="flex items-center space-x-4">
-        <img
-          alt={`@${username}'s profile picture`}
-          src={image}
-          className="h-10 w-10 rounded-full"
-          referrerPolicy="no-referrer"
-        />
+        <ProfilePicture username={username} image={image} className="w-10" />
         <div className="space-y py-2">
           <p className="font-medium">@{username}</p>
         </div>
