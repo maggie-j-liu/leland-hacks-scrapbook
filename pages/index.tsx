@@ -19,7 +19,7 @@ export default function Home({ projects }: { projects: ProjectCardType[] }) {
           <p className="mt-4 text-center text-xl">
             No posts yet. Why don&apos;t you{" "}
             <Link href="/project/create">
-              <a className="text-primary-200 hover:text-primary-300">
+              <a className="dark:text-primary-200 dark:hover:text-primary-300">
                 create your own
               </a>
             </Link>

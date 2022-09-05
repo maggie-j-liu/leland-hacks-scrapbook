@@ -2,6 +2,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import formidable from "formidable";
 import cloudinary from "cloudinary";
 import { File } from "@prisma/client";
+import { unstable_getServerSession } from "next-auth";
+import { authOptions } from "./auth/[...nextauth]";
 
 //set bodyparser
 export const config = {
@@ -26,7 +28,15 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // const { files } = req.body;
+  if (req.method !== "POST") {
+    res.status(405).send("Method not allowed");
+    return;
+  }
+  const session = await unstable_getServerSession(req, res, authOptions);
+  if (!session || !session.user) {
+    res.status(401).send("Unauthorized");
+    return;
+  }
 
   let data = await new Promise((resolve, reject) => {
     const form = formidable();

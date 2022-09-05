@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { File } from "@prisma/client";
 import ContributorCard from "../../components/ContributorCard";
 import { ProjectCard } from "../../components/ProjectCard";
@@ -87,7 +87,22 @@ const CreateProject = () => {
     return null;
   }
   if (status === "unauthenticated") {
-    return <div>Please sign in</div>;
+    return (
+      <p className="mt-4 px-4 text-center text-lg">
+        Please{" "}
+        <button
+          type="button"
+          className="dark:text-primary-200 hover:dark:text-primary-300"
+          onClick={(e) => {
+            e.preventDefault();
+            signIn("google");
+          }}
+        >
+          sign in
+        </button>{" "}
+        to post.
+      </p>
+    );
   }
 
   return (
@@ -101,7 +116,7 @@ const CreateProject = () => {
             <input
               type="text"
               name="title"
-              className="rounded-lg border-2 border-primary-300 px-2 py-1 dark:bg-gray-800"
+              className="rounded-lg border-2 px-2 py-1 dark:border-primary-200 dark:bg-gray-800"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
@@ -113,7 +128,7 @@ const CreateProject = () => {
             </label>
             <textarea
               name="description"
-              className="rounded-lg border-2 border-primary-300 px-2 py-1 dark:bg-gray-800"
+              className="rounded-lg border-2 px-2 py-1 dark:border-primary-200 dark:bg-gray-800"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
@@ -138,7 +153,7 @@ const CreateProject = () => {
                     }
                   }}
                   placeholder="Type a username here, then press enter."
-                  className="w-full rounded-lg border-2 border-primary-300 py-1 pl-4 pr-2 disabled:cursor-not-allowed disabled:text-gray-400 dark:bg-gray-800"
+                  className="w-full rounded-lg border-2 py-1 pl-4 pr-2 disabled:cursor-not-allowed disabled:text-gray-400 dark:border-primary-200 dark:bg-gray-800"
                 />
               </div>
               {contributorSearchError.length > 0 ? (
