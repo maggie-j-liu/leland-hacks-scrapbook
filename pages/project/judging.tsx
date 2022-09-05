@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ProjectCard } from "../../components/ProjectCard";
 import Select from "react-select";
 import { useState } from "react";
+import { authOptions } from "../api/auth/[...nextauth]";
+import { unstable_getServerSession } from "next-auth/next";
 
 const emojiData = ["🥇", "🥈", "🥉"];
 const textData = ["First", "Second", "Third"];
@@ -36,6 +38,7 @@ const JudgeProjects = ({
                 classNamePrefix="react-select"
                 placeholder={`${textData[j]} choice`}
                 isSearchable={true}
+                isClearable={true}
                 value={choices[j]}
                 options={options}
                 onChange={(selectedOption) => {
@@ -94,7 +97,22 @@ const JudgeProjects = ({
   );
 };
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context: any) {
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  );
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
   let projects = await prisma.project.findMany({
     include: {
       contributors: true,
