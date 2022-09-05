@@ -48,6 +48,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   projects      Project[]
+  votes         Vote[]
 }
 
 model VerificationToken {
@@ -67,6 +68,7 @@ model Project {
   demo         String?
   github       String?
   createdAt    DateTime @default(now())
+  Vote         Vote[]
 }
 
 model File {
@@ -76,4 +78,15 @@ model File {
   height    Int
   project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String?
+}
+
+model Vote {
+  number    Int
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+
+  @@unique([number, userId])
+  @@unique([projectId, userId])
 }

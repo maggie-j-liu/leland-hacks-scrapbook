@@ -2,15 +2,7 @@ import prisma from "../../lib/db";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "./auth/[...nextauth]";
-import cloudinary from "cloudinary";
 import { File } from "@prisma/client";
-
-cloudinary.v2.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-  secure: true,
-});
 
 export default async function handler(
   req: NextApiRequest,
@@ -43,26 +35,30 @@ export default async function handler(
 
   const { title, description, contributors, files } = req.body;
 
-  await prisma.project.create({
-    data: {
-      title,
-      description,
-      contributors: {
-        connect: [
-          { id: session.user.id },
-          ...contributors.map((c: string) => ({ id: c })),
-        ],
+  try {
+    await prisma.project.create({
+      data: {
+        title,
+        description,
+        contributors: {
+          connect: [
+            { id: session.user.id },
+            ...contributors.map((c: string) => ({ id: c })),
+          ],
+        },
+        files: {
+          create: files.map((file: File) => ({
+            url: file.url,
+            mediaType: file.mediaType,
+            width: file.width,
+            height: file.height,
+          })),
+        },
       },
-      files: {
-        create: files.map((file: File) => ({
-          url: file.url,
-          mediaType: file.mediaType,
-          width: file.width,
-          height: file.height,
-        })),
-      },
-    },
-  });
-
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(`Error creating project: ${e}`);
+  }
   res.end();
 }

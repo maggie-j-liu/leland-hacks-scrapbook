@@ -31,6 +31,24 @@ const JudgeProjects = ({
   >([null, null, null]);
   const [options, setOptions] =
     useState<{ value: string; label: string }[]>(selectFormatted);
+  const [submitting, setSubmitting] = useState(false);
+
+  const submitVotes = async () => {
+    setSubmitting(true);
+    if (choices.some((choice) => choice === null)) {
+      return;
+    }
+    await fetch("/api/submit-votes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        votes: choices.map((choice) => choice!.value),
+      }),
+    });
+    setSubmitting(false);
+  };
 
   if (!session) {
     return (
@@ -51,13 +69,14 @@ const JudgeProjects = ({
     );
   }
   return (
-    <div className="px-4">
+    <div className="px-4 pb-8">
       <div className="mx-auto max-w-md sm:max-w-7xl">
         <div className="space-y-2">
           {choices.map((_, j) => (
             <div key={j} className="flex items-center space-x-2">
               <p className="text-2xl">{emojiData[j]}</p>
               <Select
+                isDisabled={submitting}
                 classNamePrefix="react-select"
                 placeholder={`${textData[j]} choice`}
                 isSearchable={true}
@@ -119,6 +138,17 @@ const JudgeProjects = ({
             })}
           </ProjectGrid>
         </div>
+        <button
+          type="button"
+          className="disabled:cursor-not-allowed disabled:dark:text-gray-400"
+          onClick={(e) => {
+            e.preventDefault();
+            submitVotes();
+          }}
+          disabled={submitting || choices.some((choice) => choice === null)}
+        >
+          Submit
+        </button>
       </div>
     </div>
   );

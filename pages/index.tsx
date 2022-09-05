@@ -49,6 +49,9 @@ export async function getServerSideProps() {
       },
       files: true,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   return {

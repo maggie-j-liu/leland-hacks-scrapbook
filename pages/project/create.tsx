@@ -216,9 +216,9 @@ const CreateProject = () => {
 
           <button
             type="button"
-            onClick={(e) => {
+            onClick={async (e) => {
               e.preventDefault();
-              createProject();
+              await createProject();
               router.push("/");
             }}
           >
