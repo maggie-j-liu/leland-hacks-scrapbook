@@ -32,8 +32,7 @@ const ContributorCard = ({
         >
           <HiOutlineTrash
             size={20}
-            color="red"
-            className="transition ease-in-out hover:-translate-y-1"
+            className="text-red-300 transition ease-in-out hover:-translate-y-1"
           />
         </button>
       ) : null}

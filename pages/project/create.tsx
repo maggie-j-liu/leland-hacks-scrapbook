@@ -16,6 +16,7 @@ const CreateProject = () => {
   const [contributorSearch, setContributorSearch] = useState("");
   const [contributorSearchError, setContributorSearchError] = useState("");
   const [contributors, setContributors] = useState<Contributor[]>([]);
+  const [loadingContributor, setLoadingContributor] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const router = useRouter();
@@ -23,8 +24,10 @@ const CreateProject = () => {
   const { data: session, status } = useSession();
 
   const searchForUser = async () => {
+    setLoadingContributor(true);
     if (contributorSearch.length === 0) {
       return;
+      setLoadingContributor(false);
     }
     if (
       contributors.find((c) => c.username === contributorSearch) ||
@@ -32,6 +35,7 @@ const CreateProject = () => {
     ) {
       setContributorSearch("");
       setContributorSearchError("");
+      setLoadingContributor(false);
       return;
     }
     const res = await fetch("/api/search-user", {
@@ -46,14 +50,17 @@ const CreateProject = () => {
         setContributorSearchError(
           "User not found. Make sure you entered the username correctly."
         );
+        setLoadingContributor(false);
       } else {
         setContributorSearchError("Something went wrong :(. Please try again.");
+        setLoadingContributor(false);
       }
     } else {
       setContributorSearchError("");
       const contributor = await res.json();
       setContributors((cList) => [...cList, contributor]);
       setContributorSearch("");
+      setLoadingContributor(false);
     }
   };
 
@@ -117,22 +124,27 @@ const CreateProject = () => {
               <label htmlFor="contributors" className="font-semibold">
                 Contributors
               </label>
-              <input
-                name="contributors"
-                type="text"
-                value={contributorSearch}
-                onChange={(e) => setContributorSearch(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    searchForUser();
-                  }
-                }}
-                placeholder="Type project member's username here"
-                className="rounded-lg border-2 border-primary-300 px-2 py-1 dark:bg-gray-800"
-              />
+              <div className="relative h-full before:absolute before:left-2 before:top-1 before:content-['@']">
+                <input
+                  name="contributors"
+                  type="text"
+                  value={contributorSearch}
+                  disabled={loadingContributor}
+                  onChange={(e) => setContributorSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      searchForUser();
+                    }
+                  }}
+                  placeholder="Type a username here, then press enter."
+                  className="w-full rounded-lg border-2 border-primary-300 py-1 pl-4 pr-2 disabled:cursor-not-allowed disabled:text-gray-400 dark:bg-gray-800"
+                />
+              </div>
               {contributorSearchError.length > 0 ? (
-                <p>{contributorSearchError}</p>
+                <p className="mt-1 text-sm text-red-300">
+                  {contributorSearchError}
+                </p>
               ) : null}
             </div>
 

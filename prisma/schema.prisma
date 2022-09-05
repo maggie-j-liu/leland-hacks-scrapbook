@@ -72,6 +72,8 @@ model Project {
 model File {
   url       String   @unique
   mediaType String
-  project   Project? @relation(fields: [projectId], references: [id])
+  width     Int
+  height    Int
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String?
 }

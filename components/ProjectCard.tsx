@@ -1,6 +1,7 @@
 import Markdown from "./Markdown";
 import { File, User } from "@prisma/client";
 import Link from "next/link";
+import Image from "next/image";
 
 export const ProjectCard = ({
   project,
@@ -35,11 +36,13 @@ export const ProjectCard = ({
       <Markdown>{project.description}</Markdown>
       {project.files.map((file) => {
         return (
-          <img
-            key={file.url}
-            alt="project image"
-            src={file.url}
+          <Image
             className="mx-auto w-full max-w-sm rounded-lg"
+            key={file.url}
+            src={file.url}
+            alt="project image"
+            width={file.width}
+            height={file.height}
           />
         );
       })}

@@ -15,11 +15,23 @@ export default function Home({ projects }: { projects: ProjectCardType[] }) {
   return (
     <div className="px-4">
       <div className="mx-auto max-w-md sm:max-w-7xl">
-        <ProjectGrid>
-          {projects.map((project) => {
-            return <ProjectCard key={project.id} project={project} />;
-          })}
-        </ProjectGrid>
+        {projects.length === 0 ? (
+          <p className="mt-4 text-center text-xl">
+            No posts yet. Why don&apos;t you{" "}
+            <Link href="/project/create">
+              <a className="text-primary-200 hover:text-primary-300">
+                create your own
+              </a>
+            </Link>
+            ?
+          </p>
+        ) : (
+          <ProjectGrid>
+            {projects.map((project) => {
+              return <ProjectCard key={project.id} project={project} />;
+            })}
+          </ProjectGrid>
+        )}
       </div>
     </div>
   );

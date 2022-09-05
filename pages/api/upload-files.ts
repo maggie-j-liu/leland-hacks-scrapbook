@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import formidable from "formidable";
 import cloudinary from "cloudinary";
+import { File } from "@prisma/client";
 
 //set bodyparser
 export const config = {
@@ -19,10 +20,7 @@ cloudinary.v2.config({
   secure: true,
 });
 
-export interface Media {
-  url: string;
-  mediaType: string;
-}
+export type Media = Omit<File, "projectId">;
 
 export default async function handler(
   req: NextApiRequest,
@@ -51,9 +49,15 @@ export default async function handler(
 
       function (error: any, result: any) {
         // console.log(result, error);
+        console.log(result);
 
         if (!error) {
-          media.push({ url: result.url, mediaType: result.resource_type });
+          media.push({
+            url: result.url,
+            mediaType: result.resource_type,
+            width: result.width,
+            height: result.height,
+          });
         }
       }
     );

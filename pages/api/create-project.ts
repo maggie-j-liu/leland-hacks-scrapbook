@@ -57,6 +57,8 @@ export default async function handler(
         create: files.map((file: File) => ({
           url: file.url,
           mediaType: file.mediaType,
+          width: file.width,
+          height: file.height,
         })),
       },
     },
