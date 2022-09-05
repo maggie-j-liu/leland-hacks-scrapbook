@@ -30,7 +30,13 @@ export async function getServerSideProps(context: any) {
     },
     include: {
       files: true,
-      contributors: true,
+      contributors: {
+        select: {
+          name: true,
+          username: true,
+          image: true,
+        },
+      },
     },
   });
 

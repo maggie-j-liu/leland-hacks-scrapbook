@@ -7,6 +7,8 @@ import Select from "react-select";
 import { useState } from "react";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth/next";
+import { GetServerSideProps } from "next";
+import { useSession, signIn } from "next-auth/react";
 
 const emojiData = ["🥇", "🥈", "🥉"];
 const textData = ["First", "Second", "Third"];
@@ -23,10 +25,31 @@ const JudgeProjects = ({
   projects: ProjectCardType[];
   selectFormatted: any;
 }) => {
-  const [choices, setChoices] = useState<any[]>([null, null, null]);
-  const [options, setOptions] = useState(selectFormatted);
-  console.log(choices);
+  const { data: session } = useSession();
+  const [choices, setChoices] = useState<
+    ({ value: string; label: string } | null)[]
+  >([null, null, null]);
+  const [options, setOptions] =
+    useState<{ value: string; label: string }[]>(selectFormatted);
 
+  if (!session) {
+    return (
+      <p className="px-4 text-center text-xl">
+        You must be{" "}
+        <button
+          type="button"
+          className="dark:text-primary-200 hover:dark:text-primary-300"
+          onClick={(e) => {
+            e.preventDefault();
+            signIn("google");
+          }}
+        >
+          signed in
+        </button>{" "}
+        to judge.
+      </p>
+    );
+  }
   return (
     <div className="px-4">
       <div className="mx-auto max-w-md sm:max-w-7xl">
@@ -47,13 +70,17 @@ const JudgeProjects = ({
                   choicesCopy[j] = selectedOption;
                   setChoices([...choicesCopy]);
 
-                  let optionsCopy = options.filter(
-                    (option: any) => option.value !== selectedOption.value
-                  );
+                  let optionsCopy = options;
+                  if (selectedOption) {
+                    optionsCopy = options.filter(
+                      (option) => option.value !== selectedOption.value
+                    );
+                  }
 
                   if (tempStore) {
                     optionsCopy.push(tempStore);
                   }
+                  optionsCopy.sort((a, b) => a.label.localeCompare(b.label));
 
                   setOptions([...optionsCopy]);
                 }}
@@ -97,38 +124,37 @@ const JudgeProjects = ({
   );
 };
 
-export async function getServerSideProps(context: any) {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  );
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await unstable_getServerSession(req, res, authOptions);
 
   if (!session) {
     return {
-      redirect: {
-        destination: "/api/auth/signin",
-        permanent: false,
-      },
+      props: { session },
     };
   }
 
   let projects = await prisma.project.findMany({
     include: {
-      contributors: true,
+      contributors: {
+        select: {
+          name: true,
+          username: true,
+          image: true,
+        },
+      },
       files: true,
     },
   });
 
-  const selectFormatted = projects.map((project) => {
-    return { value: project.id, label: project.title };
-  });
-
-  console.log(selectFormatted);
+  const selectFormatted = projects
+    .map((project) => {
+      return { value: project.id, label: project.title };
+    })
+    .sort((a, b) => a.label.localeCompare(b.label));
 
   return {
-    props: { projects, selectFormatted }, // will be passed to the page component as props
+    props: { session, projects, selectFormatted }, // will be passed to the page component as props
   };
-}
+};
 
 export default JudgeProjects;

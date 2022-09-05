@@ -51,3 +51,7 @@
 .react-select__input-container {
   @apply dark:text-white;
 }
+
+.react-select__indicator {
+  @apply dark:text-gray-400 hover:dark:text-gray-100;
+}

@@ -88,7 +88,7 @@ const CreateProject = () => {
   }
   if (status === "unauthenticated") {
     return (
-      <p className="mt-4 px-4 text-center text-lg">
+      <p className="mt-4 px-4 text-center text-xl">
         Please{" "}
         <button
           type="button"
