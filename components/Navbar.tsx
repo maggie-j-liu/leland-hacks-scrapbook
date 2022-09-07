@@ -1,6 +1,6 @@
 import { useSession, signOut, signIn } from "next-auth/react";
 import Link from "next/link";
-import { HiLogout } from "react-icons/hi";
+import { HiOutlineLogout } from "react-icons/hi";
 import ProfilePicture from "./ProfilePicture";
 
 export const Navbar = () => {
@@ -28,28 +28,25 @@ export const Navbar = () => {
           {status === "loading" ? null : (
             <div className="relative flex items-center space-x-2 rounded-lg py-1 px-2 dark:bg-gray-700 sm:space-x-3 sm:px-3">
               {status === "unauthenticated" ? (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    signIn("google");
-                  }}
-                >
-                  Sign In
-                </button>
+                <Link href="sign-in">
+                  <a>Sign In</a>
+                </Link>
               ) : (
                 <>
                   <ProfilePicture
                     username={session!.user.username}
                     image={session!.user.image}
-                    className="w-8"
+                    id={session!.user.id}
+                    variant="small"
                   />
                   <div>
-                    <p className="font-extrabold dark:text-white">
-                      {session?.user.name}
-                    </p>
+                    {session!.user.name ? (
+                      <p className="font-extrabold dark:text-white">
+                        {session?.user.name}
+                      </p>
+                    ) : null}
                     <p className="text-xs font-bold">
-                      @{session?.user.username}
+                      @{session!.user.username}
                     </p>
                   </div>
 
@@ -61,7 +58,7 @@ export const Navbar = () => {
                       signOut();
                     }}
                   >
-                    <HiLogout className="h-6 w-6" />
+                    <HiOutlineLogout className="h-6 w-6" />
                   </button>
                   <div className="absolute -bottom-4 right-0 rounded px-2 py-0.5 text-sm opacity-0 duration-200 peer-hover:opacity-100 peer-hover:duration-150 dark:bg-primary-500/50">
                     Sign Out

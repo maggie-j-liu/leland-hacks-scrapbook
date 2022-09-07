@@ -12,7 +12,7 @@ export const ProjectCard = ({
     id?: string;
     title: string;
     description: string;
-    contributors: Omit<User, "email" | "emailVerified" | "id">[];
+    contributors: Omit<User, "email" | "emailVerified">[];
     files: File[];
   };
   className?: string;
@@ -52,11 +52,14 @@ export const ProjectCard = ({
         {project.contributors.map((contributor, i) => {
           return (
             <div key={i} className="relative">
-              <ProfilePicture
-                username={contributor.username!}
-                image={contributor.image!}
-                className="peer w-8"
-              />
+              <div className="peer w-8 overflow-hidden rounded-full">
+                <ProfilePicture
+                  id={contributor.id}
+                  username={contributor.username!}
+                  image={contributor.image!}
+                  variant="small"
+                />
+              </div>
 
               <div className="absolute translate-y-[0.5rem] -translate-x-[calc(50%-1rem)] rounded-md px-2 font-semibold opacity-0 transition ease-in-out peer-hover:opacity-100 dark:bg-[#4E4C59]">
                 <div className="absolute left-1/2 -z-10 -translate-y-2 -translate-x-[29%] -rotate-180">

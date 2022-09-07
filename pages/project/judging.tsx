@@ -54,16 +54,11 @@ const JudgeProjects = ({
     return (
       <p className="px-4 text-center text-xl">
         You must be{" "}
-        <button
-          type="button"
-          className="dark:text-primary-200 hover:dark:text-primary-300"
-          onClick={(e) => {
-            e.preventDefault();
-            signIn("google");
-          }}
-        >
-          signed in
-        </button>{" "}
+        <Link href="/sign-in">
+          <a className="dark:text-primary-200 hover:dark:text-primary-300">
+            signed in
+          </a>
+        </Link>
         to judge.
       </p>
     );

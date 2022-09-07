@@ -4,6 +4,7 @@ import { File } from "@prisma/client";
 import ContributorCard from "../../components/ContributorCard";
 import { ProjectCard } from "../../components/ProjectCard";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 interface Contributor {
   id: string;
@@ -90,16 +91,11 @@ const CreateProject = () => {
     return (
       <p className="mt-4 px-4 text-center text-xl">
         Please{" "}
-        <button
-          type="button"
-          className="dark:text-primary-200 hover:dark:text-primary-300"
-          onClick={(e) => {
-            e.preventDefault();
-            signIn("google");
-          }}
-        >
-          sign in
-        </button>{" "}
+        <Link href="/sign-in">
+          <a className="dark:text-primary-200 hover:dark:text-primary-300">
+            sign in
+          </a>
+        </Link>{" "}
         to post.
       </p>
     );
@@ -115,7 +111,7 @@ const CreateProject = () => {
             </label>
             <input
               type="text"
-              name="title"
+              id="title"
               className="rounded-lg border-2 px-2 py-1 dark:border-primary-200 dark:bg-gray-800"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -127,7 +123,7 @@ const CreateProject = () => {
               Description
             </label>
             <textarea
-              name="description"
+              id="description"
               className="rounded-lg border-2 px-2 py-1 dark:border-primary-200 dark:bg-gray-800"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -141,7 +137,7 @@ const CreateProject = () => {
               </label>
               <div className="relative h-full before:absolute before:left-2 before:top-1 before:content-['@']">
                 <input
-                  name="contributors"
+                  id="contributors"
                   type="text"
                   value={contributorSearch}
                   disabled={loadingContributor}
@@ -167,6 +163,7 @@ const CreateProject = () => {
               <ContributorCard
                 username={session!.user.username}
                 image={session!.user.image}
+                id={session!.user.id}
               />
               {contributors.map((contributor) => {
                 return (

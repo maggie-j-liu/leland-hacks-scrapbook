@@ -11,6 +11,48 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
+    {
+      id: "email",
+      type: "email",
+      name: "Email",
+      server: "",
+      options: {},
+
+      maxAge: 24 * 60 * 60,
+      sendVerificationRequest: async ({ identifier: email, url }) => {
+        const htmlMessage = `<div>Hey hacker!</div>
+<br />
+<div>Click <a href="${url}">this link</a> to sign in to Leland Hacks Scrapbook.</div>
+<br />
+<small>Or copy and paste this link into your browser: ${url}</small>`;
+        const textMessage = `Hey hacker!
+
+Use this link to sign in to Leland Hacks Scrapbook: ${url}`;
+
+        const res = await fetch(
+          "https://mailinglist.lelandcs.workers.dev/sendEmail",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${process.env.MAILINGLIST_AUTH_TOKEN}`,
+            },
+            body: JSON.stringify({
+              email,
+              from: "scrapbook@lelandhacks.com",
+              subject: "Sign in to Leland Hacks Scrapbook",
+              htmlMessage,
+              textMessage,
+            }),
+          }
+        );
+        if (!res.ok) {
+          throw new Error(
+            `Failed to send email: ${res.status} ${await res.text()}`
+          );
+        }
+      },
+    },
   ],
   callbacks: {
     async session({ session, token, user }) {
@@ -21,8 +63,14 @@ export const authOptions: NextAuthOptions = {
   },
   events: {
     async createUser({ user }) {
-      console.log("user created", user);
-      let username = user.name?.replace(/\s/g, "").toLowerCase();
+      let username;
+      if (user.name) {
+        username = user.name.replace(/\s/g, "").toLowerCase();
+      } else if (user.email) {
+        username = user.email.split("@")[0];
+      } else {
+        username = user.id;
+      }
       try {
         await prisma.user.update({
           where: { id: user.id },

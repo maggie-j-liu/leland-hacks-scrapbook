@@ -35,6 +35,7 @@ export async function getServerSideProps(context: any) {
           name: true,
           username: true,
           image: true,
+          id: true,
         },
       },
     },

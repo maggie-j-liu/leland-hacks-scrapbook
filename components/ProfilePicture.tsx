@@ -1,20 +1,31 @@
+import Avatar from "boring-avatars";
 const ProfilePicture = ({
   username,
+  id,
   image,
-  className,
+  variant,
 }: {
   username: string;
-  image: string;
-  className: string;
+  id: string;
+  image: string | null;
+  variant: "small" | "large";
 }) => {
-  return (
-    <img
-      alt={`@${username}'s profile picture`}
-      src={image}
-      className={`${className} aspect-square rounded-full`}
-      referrerPolicy="no-referrer"
-    />
-  );
+  if (image) {
+    return (
+      <img
+        alt={`@${username}'s profile picture`}
+        src={image}
+        className={`${
+          variant === "small" ? "w-8" : "w-10"
+        } aspect-square rounded-full`}
+        referrerPolicy="no-referrer"
+      />
+    );
+  } else {
+    return (
+      <Avatar name={id} variant="marble" size={variant === "small" ? 32 : 40} />
+    );
+  }
 };
 
 export default ProfilePicture;
