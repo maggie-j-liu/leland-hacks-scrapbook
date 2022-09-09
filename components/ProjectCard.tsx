@@ -12,7 +12,7 @@ export const ProjectCard = ({
     id?: string;
     title: string;
     description: string;
-    contributors: Omit<User, "email" | "emailVerified">[];
+    contributors: Pick<User, "id" | "username" | "image">[];
     files: File[];
   };
   className?: string;

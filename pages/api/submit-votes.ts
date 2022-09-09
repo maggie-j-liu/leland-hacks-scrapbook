@@ -2,7 +2,9 @@ import prisma from "../../lib/db";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "./auth/[...nextauth]";
-import { File } from "@prisma/client";
+import { File, VoteType } from "@prisma/client";
+
+const voteTypes = [VoteType.FIRST, VoteType.SECOND, VoteType.THIRD];
 
 export default async function handler(
   req: NextApiRequest,
@@ -34,7 +36,7 @@ export default async function handler(
 
     const createVotes = prisma.vote.createMany({
       data: votes.map((vote, i) => ({
-        number: i + 1,
+        place: voteTypes[i],
         projectId: vote,
         userId: session.user.id,
       })),
