@@ -192,13 +192,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     },
   });
 
-  const selectFormatted = projects
+  let selectFormatted = projects
     .map((project) => {
       return { value: project.id, label: project.title };
     })
     .sort((a, b) => a.label.localeCompare(b.label));
 
-  let votes = null;
+  let votes: { value: string; label: string }[] | null = null;
   if (currentVotes.length === 3) {
     votes = currentVotes.map((vote) => {
       return {
@@ -206,6 +206,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         label: projects.find((p) => p.id === vote.projectId)!.title,
       };
     });
+  }
+  if (votes !== null) {
+    selectFormatted = selectFormatted.filter(
+      (option) => !votes!.some((vote) => vote.value === option.value)
+    );
   }
 
   return {
