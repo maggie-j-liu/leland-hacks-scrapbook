@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { File } from "@prisma/client";
 import ContributorCard from "../../components/ContributorCard";
 import { ProjectCard } from "../../components/ProjectCard";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { HiX } from "react-icons/hi";
 
 interface Contributor {
   id: string;
@@ -21,6 +22,7 @@ const CreateProject = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const router = useRouter();
 
   const { data: session, status } = useSession();
@@ -71,6 +73,7 @@ const CreateProject = () => {
   };
 
   const createProject = async () => {
+    setSubmitted(true);
     await fetch("/api/create-project", {
       method: "POST",
       headers: {
@@ -82,6 +85,17 @@ const CreateProject = () => {
         contributors: contributors.map((c) => c.id),
         files,
       }),
+    });
+  };
+
+  const deleteFile = async (file: File) => {
+    setFiles((files) => files.filter((f) => f.url !== file.url));
+    await fetch("/api/delete-file", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url: file.url }),
     });
   };
 
@@ -182,7 +196,8 @@ const CreateProject = () => {
             name="image"
             type="file"
             className="mx-auto block w-full"
-            accept="image/*, video*/"
+            // accept="image/*, video*/"
+            accept="image/png, image/jpeg, image/jpg"
             multiple
             onChange={async (e) => {
               if (e.target.files) {
@@ -205,15 +220,28 @@ const CreateProject = () => {
               }
             }}
           />
-
-          {files.map((file: any) => {
-            return (
-              <div key={file.url}>
-                <img className="w-32" src={file.url} alt="uploaded image" />
-              </div>
-            );
-          })}
-
+          {uploadingImage ? (
+            <p className="dark:text-gray-300">Uploading image(s)...</p>
+          ) : null}
+          <div className="flex flex-wrap gap-4">
+            {files.map((file) => {
+              return (
+                <div key={file.url} className="relative">
+                  <button
+                    className="group absolute top-0 right-0 flex h-6 w-6 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-primary-100/40 duration-200 hover:bg-primary-200 hover:duration-100"
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      deleteFile(file);
+                    }}
+                  >
+                    <HiX className="text-white duration-200 group-hover:text-primary-800 group-hover:duration-100" />
+                  </button>
+                  <img className="w-32" src={file.url} alt="uploaded image" />
+                </div>
+              );
+            })}
+          </div>
           <button
             type="button"
             onClick={async (e) => {
@@ -227,7 +255,8 @@ const CreateProject = () => {
               description.trim().length === 0 ||
               files.length === 0 ||
               loadingContributor ||
-              uploadingImage
+              uploadingImage ||
+              submitted
             }
           >
             Submit

@@ -53,7 +53,6 @@ export default async function handler(
 
   const cloudinaryPromises = [];
   for (const [fileName, file] of Object.entries(files)) {
-    console.log(file);
     const promise = cloudinary.v2.uploader.upload(
       (file as { filepath: string }).filepath,
 
