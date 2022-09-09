@@ -97,3 +97,7 @@ model Vote {
   @@unique([place, userId])
   @@unique([projectId, userId])
 }
+
+model CheckedIn {
+  email String @unique
+}
