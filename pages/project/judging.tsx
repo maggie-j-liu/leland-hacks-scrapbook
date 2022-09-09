@@ -9,6 +9,7 @@ import { authOptions } from "../api/auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth/next";
 import { GetServerSideProps } from "next";
 import { useSession, signIn } from "next-auth/react";
+import { Vote } from "@prisma/client";
 
 const emojiData = ["🥇", "🥈", "🥉"];
 const textData = ["First", "Second", "Third"];
@@ -21,14 +22,21 @@ const borderColors = [
 const JudgeProjects = ({
   projects,
   selectFormatted,
+  currentVotes,
 }: {
   projects: ProjectCardType[];
   selectFormatted: any;
+  currentVotes: ({ value: string; label: string } | null)[];
 }) => {
   const { data: session } = useSession();
   const [choices, setChoices] = useState<
     ({ value: string; label: string } | null)[]
-  >([null, null, null]);
+  >(() => {
+    if (currentVotes) {
+      return currentVotes;
+    }
+    return [null, null, null];
+  });
   const [options, setOptions] =
     useState<{ value: string; label: string }[]>(selectFormatted);
   const [submitting, setSubmitting] = useState(false);
@@ -58,7 +66,7 @@ const JudgeProjects = ({
           <a className="dark:text-primary-200 hover:dark:text-primary-300">
             signed in
           </a>
-        </Link>
+        </Link>{" "}
         to judge.
       </p>
     );
@@ -66,6 +74,9 @@ const JudgeProjects = ({
   return (
     <div className="px-4 pb-8">
       <div className="mx-auto max-w-md sm:max-w-7xl">
+        <h1 className="mb-8 text-center text-3xl text-primary-200">
+          Your Votes
+        </h1>
         <div className="space-y-2">
           {choices.map((_, j) => (
             <div key={j} className="flex items-center space-x-2">
@@ -104,6 +115,18 @@ const JudgeProjects = ({
           ))}
         </div>
 
+        <button
+          type="button"
+          className="mt-4 w-full rounded-md bg-secondary-300 px-4 py-1.5 text-black duration-300 hover:duration-100 enabled:hover:bg-primary-200 disabled:cursor-not-allowed disabled:saturate-50"
+          onClick={(e) => {
+            e.preventDefault();
+            submitVotes();
+          }}
+          disabled={submitting || choices.some((choice) => choice === null)}
+        >
+          Submit
+        </button>
+
         <div className="mt-8">
           <ProjectGrid>
             {choices.map((choice, i) => {
@@ -133,17 +156,6 @@ const JudgeProjects = ({
             })}
           </ProjectGrid>
         </div>
-        <button
-          type="button"
-          className="disabled:cursor-not-allowed disabled:dark:text-gray-400"
-          onClick={(e) => {
-            e.preventDefault();
-            submitVotes();
-          }}
-          disabled={submitting || choices.some((choice) => choice === null)}
-        >
-          Submit
-        </button>
       </div>
     </div>
   );
@@ -158,7 +170,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     };
   }
 
-  let projects = await prisma.project.findMany({
+  const currentVotes = await prisma.vote.findMany({
+    where: {
+      userId: session.user.id,
+    },
+    orderBy: {
+      place: "asc",
+    },
+  });
+
+  const projects = await prisma.project.findMany({
     include: {
       contributors: {
         select: {
@@ -177,8 +198,23 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     })
     .sort((a, b) => a.label.localeCompare(b.label));
 
+  let votes = null;
+  if (currentVotes.length === 3) {
+    votes = currentVotes.map((vote) => {
+      return {
+        value: vote.projectId,
+        label: projects.find((p) => p.id === vote.projectId)!.title,
+      };
+    });
+  }
+
   return {
-    props: { session, projects, selectFormatted }, // will be passed to the page component as props
+    props: {
+      session,
+      projects,
+      selectFormatted,
+      currentVotes: votes,
+    }, // will be passed to the page component as props
   };
 };
 

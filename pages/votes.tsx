@@ -15,20 +15,29 @@ const Votes = (
 ) => {
   const projects = props.projects!;
   return (
-    <div>
-      <h1>Votes</h1>
-      <ProjectGrid>
-        {projects.map((project) => (
-          <div key={project.id}>
-            points: {project.calculatedPoints}
-            <br />
-            normal points: {project.rawPoints.normal}
-            <br />
-            admin points: {project.rawPoints.admin}
-            <ProjectCard project={project} />
-          </div>
-        ))}
-      </ProjectGrid>
+    <div className="px-4">
+      <div className="mx-auto max-w-md sm:max-w-7xl">
+        <h1 className="mb-8 text-center text-3xl text-secondary-200">Votes</h1>
+        <div>
+          total peer votes: {props.totalNormalVotes} ~ total peers voted:{" "}
+          {props.totalNormalVotes! / 3}
+        </div>
+        <div>
+          total judge votes: {props.totalAdminVotes} ~ total judges voted:{" "}
+          {props.totalAdminVotes! / 3}
+        </div>
+        <div>key: final score / peer points / judge points</div>
+        <div className="h-6" />
+        <ProjectGrid>
+          {projects.map((project) => (
+            <div key={project.id}>
+              {project.calculatedPoints.toFixed(5)} / {project.rawPoints.normal}{" "}
+              / {project.rawPoints.admin}
+              <ProjectCard project={project} />
+            </div>
+          ))}
+        </ProjectGrid>
+      </div>
     </div>
   );
 };
@@ -120,13 +129,14 @@ export const getServerSideProps = async ({
       rawPoints: projectPoints,
     };
   });
-  const adminMupltiplier =
-    totalAdminVotes === 0 ? 0 : totalNormalVotes / totalAdminVotes;
   const projectsWithCalculatedPoints = projectsWithRawPoints.map((project) => {
     return {
       ...project,
       calculatedPoints:
-        project.rawPoints.normal + project.rawPoints.admin * adminMupltiplier,
+        (totalNormalVotes === 0
+          ? 0
+          : project.rawPoints.normal / totalNormalVotes) +
+        (totalAdminVotes === 0 ? 0 : project.rawPoints.admin / totalAdminVotes),
     };
   });
 
@@ -138,6 +148,8 @@ export const getServerSideProps = async ({
     props: {
       projects: projectsWithCalculatedPoints,
       session,
+      totalAdminVotes,
+      totalNormalVotes,
     },
   };
 };

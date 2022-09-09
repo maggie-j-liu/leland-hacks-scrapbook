@@ -20,6 +20,7 @@ const CreateProject = () => {
   const [loadingContributor, setLoadingContributor] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
   const router = useRouter();
 
   const { data: session, status } = useSession();
@@ -27,8 +28,8 @@ const CreateProject = () => {
   const searchForUser = async () => {
     setLoadingContributor(true);
     if (contributorSearch.length === 0) {
-      return;
       setLoadingContributor(false);
+      return;
     }
     if (
       contributors.find((c) => c.username === contributorSearch) ||
@@ -185,6 +186,7 @@ const CreateProject = () => {
             multiple
             onChange={async (e) => {
               if (e.target.files) {
+                setUploadingImage(true);
                 const fd = new FormData();
                 Array.from(e.target.files).forEach((file, i) => {
                   fd.append(file.name, file);
@@ -198,6 +200,7 @@ const CreateProject = () => {
                 const newFiles = await media.json();
                 setFiles((f) => [...f, ...newFiles]);
                 e.target.value = "";
+                setUploadingImage(false);
                 // console.log(e.target.files);
               }
             }}
@@ -218,6 +221,14 @@ const CreateProject = () => {
               await createProject();
               router.push("/");
             }}
+            className="rounded-md bg-secondary-300 px-4 py-1.5 text-black duration-300 hover:duration-100 enabled:hover:bg-primary-200 disabled:saturate-50"
+            disabled={
+              title.trim().length === 0 ||
+              description.trim().length === 0 ||
+              files.length === 0 ||
+              loadingContributor ||
+              uploadingImage
+            }
           >
             Submit
           </button>
