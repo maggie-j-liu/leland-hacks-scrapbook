@@ -23,6 +23,17 @@ const SignIn = () => {
   return (
     <div className="px-4">
       <div className="mx-auto w-80">
+        <button
+          className="w-full rounded-md bg-gradient-to-r from-secondary-300 to-green-300 py-2 px-2 text-black"
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            signIn("google");
+          }}
+        >
+          Sign in with Google
+        </button>
+        <div className="my-8 w-full text-center">OR</div>
         <label htmlFor="email">Email</label>
         <input
           ref={emailInputRef}
@@ -50,17 +61,6 @@ const SignIn = () => {
           }}
         >
           Send Magic Link
-        </button>
-        <div className="my-8 w-full text-center">OR</div>
-        <button
-          className="w-full rounded-md bg-gradient-to-r from-secondary-300 to-green-300 py-2 px-2 text-black"
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            signIn("google");
-          }}
-        >
-          Sign in with Google
         </button>
       </div>
     </div>

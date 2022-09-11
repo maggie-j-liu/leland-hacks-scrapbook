@@ -60,6 +60,21 @@ Use this link to sign in to Leland Hacks Scrapbook: ${url}`;
       session.user.username = user.username as string;
       return session;
     },
+    async signIn({ user }) {
+      if (!user.email) {
+        console.log("returning false");
+        return false;
+      }
+      const checkedIn = await prisma.checkedIn.findUnique({
+        where: {
+          email: user.email,
+        },
+      });
+      if (!checkedIn) {
+        return "/not-checked-in";
+      }
+      return true;
+    },
   },
   events: {
     async createUser({ user }) {
