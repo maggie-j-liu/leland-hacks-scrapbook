@@ -35,7 +35,7 @@ export const ProjectCard = ({
       }`}
     >
       {"id" in project ? (
-        <Link href={`/project/view/${project.id}`}>
+        <Link href={`/post/view/${project.id}`}>
           <a className="mx-auto block w-fit">
             <h2 className="text-center text-xl font-semibold hover:underline">
               {project.title}

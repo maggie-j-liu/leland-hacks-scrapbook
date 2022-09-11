@@ -19,7 +19,7 @@ export const Navbar = () => {
         </Link>
 
         <div className="flex items-center space-x-2 sm:space-x-6">
-          <Link href="/project/create">
+          <Link href="/post/create">
             <a>
               <span className="hidden sm:inline">Create </span>Post
             </a>
