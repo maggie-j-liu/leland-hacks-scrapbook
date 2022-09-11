@@ -40,6 +40,7 @@ const JudgeProjects = ({
   const [options, setOptions] =
     useState<{ value: string; label: string }[]>(selectFormatted);
   const [submitting, setSubmitting] = useState(false);
+  console.log(choices);
 
   const submitVotes = async () => {
     setSubmitting(true);
@@ -183,6 +184,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   });
 
   const projects = await prisma.project.findMany({
+    where: {
+      ship: true,
+    },
     include: {
       contributors: {
         select: {
@@ -201,16 +205,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     })
     .sort((a, b) => a.label.localeCompare(b.label));
 
-  let votes: { value: string; label: string }[] | null = null;
+  let votes: { value: string; label: string }[] = [];
   if (currentVotes.length === 3) {
-    votes = currentVotes.map((vote) => {
-      return {
-        value: vote.projectId,
-        label: projects.find((p) => p.id === vote.projectId)!.title,
-      };
-    });
+    for (const vote of currentVotes) {
+      const project = projects.find((p) => p.id === vote.projectId);
+      if (project) {
+        votes.push({
+          value: vote.projectId,
+          label: project.title,
+        });
+      }
+    }
   }
-  if (votes !== null) {
+  if (votes.length === 3) {
     selectFormatted = selectFormatted.filter(
       (option) => !votes!.some((vote) => vote.value === option.value)
     );
@@ -221,7 +228,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
       session,
       projects,
       selectFormatted,
-      currentVotes: votes,
+      currentVotes: votes.length === 3 ? votes : null,
     }, // will be passed to the page component as props
   };
 };

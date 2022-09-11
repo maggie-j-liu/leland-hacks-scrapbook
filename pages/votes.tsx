@@ -81,6 +81,9 @@ export const getServerSideProps = async ({
     [VoteType.THIRD]: 1,
   };
   const projects = await prisma.project.findMany({
+    where: {
+      ship: true,
+    },
     include: {
       votes: {
         select: {
