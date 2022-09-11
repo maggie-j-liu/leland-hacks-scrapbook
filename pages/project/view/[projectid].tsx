@@ -13,9 +13,7 @@ const ViewProject = ({ project }: { project: ProjectCardType }) => {
           return <img key={file.url} src={file.url} className="max-h-72" />;
         })}
       </div>
-      {/* md:max-w-min */}
 
-      {/* md:flex-row-reverse */}
       <div className="flex flex-col space-y-6  md:justify-between md:space-y-4">
         <div className="w-full space-y-2 rounded-lg border-4 border-gray-500 bg-gray-700 p-4 ">
           <h3 className="text-md font-semibold">Contributors</h3>
