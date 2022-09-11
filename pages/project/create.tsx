@@ -23,6 +23,7 @@ const CreateProject = () => {
   const [description, setDescription] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isShip, setIsShip] = useState<boolean | null>(null);
   const router = useRouter();
 
   const { data: session, status } = useSession();
@@ -73,8 +74,19 @@ const CreateProject = () => {
   };
 
   const createProject = async () => {
+    if (
+      title.trim().length === 0 ||
+      description.trim().length === 0 ||
+      files.length === 0 ||
+      loadingContributor ||
+      uploadingImage ||
+      submitted ||
+      isShip === null
+    ) {
+      return;
+    }
     setSubmitted(true);
-    await fetch("/api/create-project", {
+    const res = await fetch("/api/create-project", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -84,8 +96,14 @@ const CreateProject = () => {
         description,
         contributors: contributors.map((c) => c.id),
         files,
+        ship: isShip,
       }),
     });
+    if (!res.ok) {
+      alert("Something went wrong :(. Please try again.");
+      return;
+    }
+    router.push("/");
   };
 
   const deleteFile = async (file: File) => {
@@ -191,7 +209,42 @@ const CreateProject = () => {
               })}
             </div>
           </div>
-
+          <div>
+            <p className="mb-4 text-gray-300">
+              <span className="text-secondary-300">Scrapbook</span> is for any
+              update (on what workshops you&apos;re attending, activities, or
+              any progress on your project). A{" "}
+              <span className="text-primary-300">ship</span> is a finished
+              project that will be judged and voted on!{" "}
+            </p>
+            <input
+              type="radio"
+              id="scrapbook"
+              value="Scrapbook"
+              name="scrap_ship"
+              onChange={() => {
+                setIsShip(false);
+              }}
+            />
+            <label htmlFor="scrapbook" className="text-secondary-300">
+              {" "}
+              Scrapbook
+            </label>
+            <br />
+            <input
+              type="radio"
+              id="ship"
+              value="Ship"
+              name="scrap_ship"
+              onChange={() => {
+                setIsShip(true);
+              }}
+            />
+            <label htmlFor="ship" className="text-primary-300">
+              {" "}
+              Ship
+            </label>
+          </div>
           <input
             name="image"
             type="file"
@@ -247,16 +300,16 @@ const CreateProject = () => {
             onClick={async (e) => {
               e.preventDefault();
               await createProject();
-              router.push("/");
             }}
-            className="rounded-md bg-secondary-300 px-4 py-1.5 text-black duration-300 hover:duration-100 enabled:hover:bg-primary-200 disabled:saturate-50"
+            className="rounded-md bg-secondary-300 px-4 py-1.5 text-black duration-300 hover:duration-100 enabled:hover:bg-primary-200 disabled:cursor-not-allowed disabled:saturate-50"
             disabled={
               title.trim().length === 0 ||
               description.trim().length === 0 ||
               files.length === 0 ||
               loadingContributor ||
               uploadingImage ||
-              submitted
+              submitted ||
+              isShip === null
             }
           >
             Submit
@@ -282,6 +335,7 @@ Add links like this: \\[[Leland Hacks Website](https://lelandhacks.com)\\](https
 `,
               contributors: [session!.user, ...contributors],
               files,
+              ship: isShip,
             }}
           />
         </div>

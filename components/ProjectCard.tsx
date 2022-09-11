@@ -7,6 +7,7 @@ import ProfilePicture from "./ProfilePicture";
 export const ProjectCard = ({
   project,
   className = "",
+  noBorder = false,
 }: {
   project: {
     id?: string;
@@ -14,12 +15,24 @@ export const ProjectCard = ({
     description: string;
     contributors: Pick<User, "id" | "username" | "image">[];
     files: File[];
+    ship: boolean | null;
   };
   className?: string;
+  noBorder?: boolean;
 }) => {
   return (
     <div
-      className={`${className} mb-4 w-full space-y-4 rounded-lg p-6 dark:bg-gray-800`}
+      className={`${className} mb-4 w-full space-y-4 rounded-lg ${
+        noBorder ? "" : "border-2"
+      } p-6 dark:bg-gray-800 ${
+        noBorder
+          ? ""
+          : project.ship === true
+          ? "border-primary-300"
+          : project.ship === false
+          ? "border-secondary-300"
+          : ""
+      }`}
     >
       {"id" in project ? (
         <Link href={`/project/view/${project.id}`}>

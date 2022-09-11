@@ -70,6 +70,7 @@ model Project {
   github       String?
   createdAt    DateTime @default(now())
   votes        Vote[]
+  ship         Boolean
 }
 
 model File {

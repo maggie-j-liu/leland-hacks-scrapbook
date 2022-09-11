@@ -143,12 +143,15 @@ const JudgeProjects = ({
                         description: "",
                         contributors: [],
                         files: [],
+                        ship: true,
                       }}
+                      noBorder
                     />
                   ) : (
                     <ProjectCard
                       className={`border-4 ${borderColors[i]}`}
                       project={projects.find((p) => p.id === choice.value)!}
+                      noBorder
                     />
                   )}
                 </div>
