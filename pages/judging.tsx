@@ -1,11 +1,11 @@
-import { ProjectCardType } from "../index";
-import { ProjectGrid } from "../../components/ProjectGrid";
-import prisma from "../../lib/db";
+import { ProjectCardType } from "./index";
+import { ProjectGrid } from "../components/ProjectGrid";
+import prisma from "../lib/db";
 import Link from "next/link";
-import { ProjectCard } from "../../components/ProjectCard";
+import { ProjectCard } from "../components/ProjectCard";
 import Select from "react-select";
 import { useState } from "react";
-import { authOptions } from "../api/auth/[...nextauth]";
+import { authOptions } from "./api/auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth/next";
 import { GetServerSideProps } from "next";
 import { useSession, signIn } from "next-auth/react";
