@@ -20,10 +20,12 @@ const borderColors = [
 ];
 
 const JudgeProjects = ({
+  closed,
   projects,
   selectFormatted,
   currentVotes,
 }: {
+  closed: boolean;
   projects: ProjectCardType[];
   selectFormatted: any;
   currentVotes: ({ value: string; label: string } | null)[];
@@ -57,6 +59,14 @@ const JudgeProjects = ({
     });
     setSubmitting(false);
   };
+
+  if (closed) {
+    return (
+      <p className="px-4 text-center text-xl">
+        Judging is not open yet. Check back later!
+      </p>
+    );
+  }
 
   if (!session) {
     return (
@@ -165,6 +175,11 @@ const JudgeProjects = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  // return {
+  //   props: {
+  //     closed: true,
+  //   },
+  // };
   const session = await unstable_getServerSession(req, res, authOptions);
 
   if (!session) {
