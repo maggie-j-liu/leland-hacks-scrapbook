@@ -2,15 +2,24 @@ import prisma from "../../../lib/db";
 import { ProjectCardType } from "../..";
 import Markdown from "../../../components/Markdown";
 import ProfilePicture from "../../../components/ProfilePicture";
+import Image from "next/future/image";
 
 const ViewProject = ({ project }: { project: ProjectCardType }) => {
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-4 md:p-6 lg:p-8">
       <h1 className="text-5xl font-black">{project.title}</h1>
 
-      <div className="flex items-center space-x-6 overflow-y-auto">
+      <div className="flex items-center justify-start space-x-6 overflow-y-auto">
         {project.files?.map((file) => {
-          return <img key={file.url} src={file.url} className="max-h-72" />;
+          return (
+            <Image
+              key={file.url}
+              width={(file.width * 288) / file.height}
+              height={288}
+              src={file.url}
+              alt="post image"
+            />
+          );
         })}
       </div>
 
