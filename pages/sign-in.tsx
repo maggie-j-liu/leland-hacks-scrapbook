@@ -3,6 +3,8 @@ import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { signIn } from "next-auth/react";
 import { useRef, useState } from "react";
+import { SiGoogle } from "react-icons/si";
+import { HiOutlineMail } from "react-icons/hi";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -22,15 +24,21 @@ const SignIn = () => {
   };
   return (
     <div className="px-4">
+      <h1 className="text-center text-3xl text-primary-200">Sign In</h1>
+      <h2 className="mx-auto mb-8 max-w-lg text-center text-primary-50">
+        Sign in with the email you registered with. If you need to use a
+        different email, let an organizer know!
+      </h2>
       <div className="mx-auto w-80">
         <button
-          className="w-full rounded-md bg-gradient-to-r from-secondary-300 to-green-300 py-2 px-2 text-black"
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-gradient-to-r from-secondary-300 to-green-300 py-2 px-2 text-black duration-300 hover:scale-110 hover:duration-150"
           type="button"
           onClick={(e) => {
             e.preventDefault();
             signIn("google");
           }}
         >
+          <SiGoogle />
           Sign in with Google
         </button>
         <div className="my-8 w-full text-center">OR</div>
@@ -53,13 +61,14 @@ const SignIn = () => {
           <p className="text-sm text-red-300">{error}</p>
         ) : null}
         <button
-          className="mt-4 w-full rounded-md bg-gradient-to-r from-primary-300 to-orange-300 px-2 py-2 text-black"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-gradient-to-r from-primary-300 to-orange-300 px-2 py-2 text-black duration-300 hover:scale-110 hover:duration-150"
           type="button"
           onClick={(e) => {
             e.preventDefault();
             signInWithEmail();
           }}
         >
+          <HiOutlineMail className="h-6 w-6" />
           Send Magic Link
         </button>
       </div>

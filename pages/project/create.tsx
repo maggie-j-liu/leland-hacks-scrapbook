@@ -138,6 +138,9 @@ const CreateProject = () => {
     <div className="px-4">
       <div className="mx-auto flex max-w-7xl flex-col gap-x-8 lg:flex-row">
         <div className="flex-grow space-y-8">
+          <h1 className="text-center text-3xl text-primary-200">
+            Post to Your Scrapbook
+          </h1>
           <div className="flex flex-col">
             <label htmlFor="title" className="font-semibold">
               Title of Project
