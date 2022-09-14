@@ -16,6 +16,7 @@ specifiers:
   formidable: ^2.0.1
   next: 12.2.5
   next-auth: ^4.10.3
+  next-seo: ^5.5.0
   next-superjson: ^0.0.4
   postcss: ^8.4.16
   prettier: ^2.7.1
@@ -41,6 +42,7 @@ dependencies:
   cloudinary: 1.31.0
   next: 12.2.5_biqbaboplfbrettd7655fr4n2y
   next-auth: 4.10.3_biqbaboplfbrettd7655fr4n2y
+  next-seo: 5.5.0_3xcjr4wz26biff45sz3jtokgje
   next-superjson: 0.0.4_hxl37nwlyjisl3a2fjlc4lffbm
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -2989,6 +2991,18 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       uuid: 8.3.2
+    dev: false
+
+  /next-seo/5.5.0_3xcjr4wz26biff45sz3jtokgje:
+    resolution: {integrity: sha512-5ouBHFtx8YrSDW44lj0qIEQ+oMcz6stgoITB+SqHUZbhgizoJsyLmq73gJ0lxtEKpcN8vG2QgRIJfdb8OAPChw==}
+    peerDependencies:
+      next: ^8.1.1-canary.54 || >=9.0.0
+      react: '>=16.0.0'
+      react-dom: '>=16.0.0'
+    dependencies:
+      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /next-superjson/0.0.4_hxl37nwlyjisl3a2fjlc4lffbm:
