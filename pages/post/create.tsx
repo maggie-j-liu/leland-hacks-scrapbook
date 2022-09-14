@@ -135,8 +135,8 @@ const CreateProject = () => {
   }
 
   return (
-    <div className="px-4">
-      <div className="mx-auto flex max-w-7xl flex-col gap-x-8 lg:flex-row">
+    <div className="px-4 pb-8">
+      <div className="mx-auto flex max-w-7xl flex-col gap-x-8 gap-y-10 lg:flex-row">
         <div className="flex-grow space-y-8">
           <h1 className="text-center text-3xl text-primary-200">
             Post to Your Scrapbook

@@ -8,8 +8,7 @@ import { useState } from "react";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth/next";
 import { GetServerSideProps } from "next";
-import { useSession, signIn } from "next-auth/react";
-import { Vote } from "@prisma/client";
+import { useSession } from "next-auth/react";
 
 const emojiData = ["🥇", "🥈", "🥉"];
 const textData = ["First", "Second", "Third"];
@@ -197,9 +196,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     },
   });
 
-  const projects = await prisma.project.findMany({
+  let projects = await prisma.project.findMany({
     where: {
       ship: true,
+      contributors: {
+        none: {
+          id: session.user.id,
+        },
+      },
     },
     include: {
       contributors: {
@@ -212,6 +216,30 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
       files: true,
     },
   });
+
+  // let projects = await prisma.project.findMany({
+  //   where: {
+  //     ship: true,
+  //   },
+  //   include: {
+  //     contributors: {
+  //       select: {
+  //         id: true,
+  //         name: true,
+  //         username: true,
+  //         image: true,
+  //       },
+  //     },
+  //     files: true,
+  //   },
+  // });
+
+  // projects = projects.filter(
+  //   (project) =>
+  //     !project.contributors.find(
+  //       (contributor) => contributor.id === session.user.id
+  //     )
+  // );
 
   let selectFormatted = projects
     .map((project) => {
