@@ -1,6 +1,7 @@
 import { useSession, signOut, signIn } from "next-auth/react";
 import Link from "next/link";
 import { HiOutlineLogout } from "react-icons/hi";
+import { JUDGING_OPEN } from "../lib/settings";
 import ProfilePicture from "./ProfilePicture";
 
 export const Navbar = () => {
@@ -19,9 +20,11 @@ export const Navbar = () => {
         </Link>
 
         <div className="flex items-center space-x-2 sm:space-x-6">
-          <Link href="/judging">
-            <a className="hover:text-primary-100">Judging</a>
-          </Link>
+          {JUDGING_OPEN ? (
+            <Link href="/judging">
+              <a className="hover:text-primary-100">Judging</a>
+            </Link>
+          ) : null}
           <Link href="/post/create">
             <a className="hover:text-primary-100">
               <span className="hidden sm:inline">Create </span>Post

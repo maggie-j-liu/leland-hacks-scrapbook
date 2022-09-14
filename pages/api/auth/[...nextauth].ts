@@ -2,6 +2,7 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "../../../lib/db";
+import { SIGNIN_RESTRICTED } from "../../../lib/settings";
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -61,6 +62,9 @@ Use this link to sign in to Leland Hacks Scrapbook: ${url}`;
       return session;
     },
     async signIn({ user }) {
+      if (!SIGNIN_RESTRICTED) {
+        return true;
+      }
       if (!user.email) {
         return false;
       }

@@ -9,6 +9,7 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth/next";
 import { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
+import { JUDGING_OPEN } from "../lib/settings";
 
 const emojiData = ["🥇", "🥈", "🥉"];
 const textData = ["First", "Second", "Third"];
@@ -174,11 +175,14 @@ const JudgeProjects = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  // return {
-  //   props: {
-  //     closed: true,
-  //   },
-  // };
+  if (!JUDGING_OPEN) {
+    return {
+      props: {
+        closed: true,
+      },
+    };
+  }
+
   const session = await unstable_getServerSession(req, res, authOptions);
 
   if (!session) {
