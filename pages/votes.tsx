@@ -28,7 +28,7 @@ const Votes = (
         </div>
         <div>key: final score / peer points / judge points</div>
         <div className="h-6" />
-        <ProjectGrid>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
             <div key={project.id}>
               {project.calculatedPoints.toFixed(5)} / {project.rawPoints.normal}{" "}
@@ -36,7 +36,7 @@ const Votes = (
               <ProjectCard project={project} />
             </div>
           ))}
-        </ProjectGrid>
+        </div>
       </div>
     </div>
   );
@@ -47,6 +47,7 @@ export default Votes;
 export const getServerSideProps = async ({
   req,
   res,
+  query,
 }: GetServerSidePropsContext) => {
   const session = await unstable_getServerSession(req, res, authOptions);
   if (!session) {
@@ -58,6 +59,7 @@ export const getServerSideProps = async ({
       props: {},
     };
   }
+
   const user = await prisma.user.findUnique({
     where: {
       id: session.user.id,
@@ -83,6 +85,7 @@ export const getServerSideProps = async ({
   const projects = await prisma.project.findMany({
     where: {
       ship: true,
+      beginner: query.beginner === "true" ? true : undefined,
     },
     include: {
       votes: {

@@ -24,6 +24,7 @@ const CreateProject = () => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [isShip, setIsShip] = useState<boolean | null>(null);
+  const [isBeginner, setIsBeginner] = useState<boolean | null>(null);
   const router = useRouter();
 
   const { data: session, status } = useSession();
@@ -97,6 +98,7 @@ const CreateProject = () => {
         contributors: contributors.map((c) => c.id),
         files,
         ship: isShip,
+        beginner: isShip ? isBeginner : false,
       }),
     });
     if (!res.ok) {
@@ -248,6 +250,35 @@ const CreateProject = () => {
               Ship
             </label>
           </div>
+          {isShip === true ? (
+            <div>
+              <p className="mb-4 text-gray-300">
+                Is this the first hackathon for at least half of the people on
+                your team?
+              </p>
+              <input
+                type="radio"
+                id="yes"
+                value="Yes"
+                name="beginner"
+                onChange={() => {
+                  setIsBeginner(true);
+                }}
+              />
+              <label htmlFor="yes"> Yes</label>
+              <br />
+              <input
+                type="radio"
+                id="no"
+                value="No"
+                name="beginner"
+                onChange={() => {
+                  setIsBeginner(false);
+                }}
+              />
+              <label htmlFor="no"> No</label>
+            </div>
+          ) : null}
           <input
             name="image"
             type="file"
@@ -312,7 +343,8 @@ const CreateProject = () => {
               loadingContributor ||
               uploadingImage ||
               submitted ||
-              isShip === null
+              isShip === null ||
+              (isShip === true && isBeginner === null)
             }
           >
             Submit
@@ -339,6 +371,7 @@ Add links like this: \\[[Leland Hacks Website](https://lelandhacks.com)\\](https
               contributors: [session!.user, ...contributors],
               files,
               ship: isShip,
+              beginner: isBeginner,
             }}
           />
         </div>

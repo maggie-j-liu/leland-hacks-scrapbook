@@ -16,13 +16,14 @@ export const ProjectCard = ({
     contributors: Pick<User, "id" | "username" | "image">[];
     files: File[];
     ship: boolean | null;
+    beginner: boolean | null;
   };
   className?: string;
   noBorder?: boolean;
 }) => {
   return (
     <div
-      className={`${className} mb-4 w-full space-y-4 rounded-lg ${
+      className={`${className} relative mb-4 w-full space-y-4 rounded-lg ${
         noBorder ? "" : "border-2"
       } p-6 dark:bg-gray-800 ${
         noBorder
@@ -34,16 +35,21 @@ export const ProjectCard = ({
           : ""
       }`}
     >
+      {project.beginner ? (
+        <div className="absolute top-2 right-2 text-2xl">💫</div>
+      ) : null}
       {"id" in project ? (
         <Link href={`/post/view/${project.id}`}>
-          <a className="mx-auto block w-fit">
+          <a className="mx-auto !mt-0 block w-fit">
             <h2 className="text-center text-xl font-semibold hover:underline">
               {project.title}
             </h2>
           </a>
         </Link>
       ) : (
-        <h2 className="text-center text-xl font-semibold">{project.title}</h2>
+        <h2 className="!mt-0 text-center text-xl font-semibold">
+          {project.title}
+        </h2>
       )}
 
       {/* {JSON.stringify(project)} */}

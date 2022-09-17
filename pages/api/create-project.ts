@@ -23,7 +23,8 @@ export default async function handler(
     !req.body?.description ||
     !req.body?.contributors ||
     !req.body?.files ||
-    (req.body?.ship !== false && req.body?.ship !== true)
+    (req.body?.ship !== false && req.body?.ship !== true) ||
+    (req.body?.beginner !== false && req.body?.beginner !== true)
   ) {
     res.status(400).send("Missing required fields");
     return;
@@ -34,7 +35,7 @@ export default async function handler(
     return;
   }
 
-  const { title, description, contributors, files, ship } = req.body;
+  const { title, description, contributors, files, ship, beginner } = req.body;
 
   try {
     await prisma.project.create({
@@ -56,6 +57,7 @@ export default async function handler(
           })),
         },
         ship,
+        beginner,
       },
     });
   } catch (e) {
