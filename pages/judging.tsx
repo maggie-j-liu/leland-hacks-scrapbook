@@ -154,6 +154,7 @@ const JudgeProjects = ({
                         contributors: [],
                         files: [],
                         ship: true,
+                        beginner: false,
                       }}
                       noBorder
                     />
