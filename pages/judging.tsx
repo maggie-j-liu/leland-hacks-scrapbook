@@ -142,7 +142,7 @@ const JudgeProjects = ({
             {choices.map((choice, i) => {
               return (
                 <div className="relative rounded-lg " key={i}>
-                  <div className="absolute origin-top -rotate-[20deg] text-5xl duration-300 hover:rotate-[20deg] hover:duration-100">
+                  <div className="absolute z-10 origin-top -rotate-[20deg] text-5xl duration-300 hover:rotate-[20deg] hover:duration-100">
                     {emojiData[i]}
                   </div>
                   {choice === null ? (
