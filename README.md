@@ -8,7 +8,7 @@ Feel free to fork for your own event! If you do so, a link back to https://scrap
 
 ### Environment Variables
 
-You'll need a few environment variables to get this project running. They are specified in the `.env.example` file, and are:
+You'll need a few environment variables to get this project running. They are specified in the [`.env.example`](https://github.com/maggie-j-liu/leland-hacks-scrapbook/blob/main/.env.example) file, and are:
 
 #### `DATABASE_URL`
 
@@ -39,7 +39,7 @@ This is used to verify requests sent to `/api/check-in`. You can set it to any r
 
 ### Settings
 
-In `lib/settings.ts`, you can change the following:
+In [`lib/settings.ts`](https://github.com/maggie-j-liu/leland-hacks-scrapbook/blob/main/lib/settings.ts), you can change the following:
 
 #### `JUDGING_OPEN`
 
@@ -54,3 +54,12 @@ If `true`, only users that have been added to the `CheckedIn` table can sign in.
 Run `pnpm i` to install dependencies, then `pnpm dev` to start the development server. You can access the site at `http://localhost:3000`.
 
 `pnpm exec prisma studio` can be used to open Prisma studio, where you can view and edit the database.
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org)
+- [NextAuth.js](https://next-auth.js.org)
+- [Prisma](https://www.prisma.io)
+- [CockroachDB](https://www.cockroachlabs.com)
+- [Cloudinary](https://cloudinary.com)
+- [Tailwind CSS](https://tailwindcss.com)
