@@ -1,34 +1,56 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Leland Hacks Scrapbook
 
-## Getting Started
+Inspired by [Hack Club's Scrapbook](https://scrapbook.hackclub.com), this is a platform where Leland Hacks attendees can share their projects, as well a project submission + voting system.
 
-First, run the development server:
+## Deploying Your Own
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+Feel free to fork for your own event! If you do so, a link back to https://scrapbook.lelandhacks.com would be appreciated.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment Variables
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+You'll need a few environment variables to get this project running. They are specified in the `.env.example` file, and are:
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+#### `DATABASE_URL`
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+We use CockroachDB with Prisma to store data. Make a new cluster at https://cockroachlabs.cloud, then get the connection string.
 
-## Learn More
+#### `NEXTAUTH_SECRET`
 
-To learn more about Next.js, take a look at the following resources:
+Used for NextAuth.js; generate a random string using `openssl rand -hex 32`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+#### `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Google OAuth is used to authenticate users, but feel free to replace or add any of the other [NextAuth.js providers](https://next-auth.js.org/providers/).
 
-## Deploy on Vercel
+To set up Google OAuth, follow [this guide](https://support.google.com/cloud/answer/6158849?hl=en), making sure to add `http://localhost:3000/api/auth/callback/google` and `https://{YOUR_DOMAIN}/api/auth/callback/google` to the list of authorized redirect URIs.
+The client ID and client secret provided are the values of these two variables.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### `MAILINGLIST_AUTH_TOKEN`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+This is used to allow magic link signin -- we have a system that uses MailChannels + Cloudflare Workers to send emails. You should probably remove email signin if it's not necessary, or configure [your own email provider](https://next-auth.js.org/providers/email).
+
+#### `CLOUDINARY_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+
+We use Cloudinary to store users' uploaded images. Make a Cloudinary account, and access these values in your [Cloudinary Dashboard](https://cloudinary.com/console).
+
+#### `CHECK_IN_SECRET`
+
+This is used to verify requests sent to `/api/check-in`. You can set it to any random string, and make sure to include it as a bearer token when sending requests to the endpoint. If you don't need to restrict access to only checked in users, you can just delete the endpoint and this variable.
+
+### Settings
+
+In `lib/settings.ts`, you can change the following:
+
+#### `JUDGING_OPEN`
+
+Determines whether users can vote for their projects at `/judging`.
+
+#### `SIGNIN_RESTRICTED`
+
+If `true`, only users that have been added to the `CheckedIn` table can sign in. Users can be added to this table through the `/api/check-in` endpoint.
+
+## Use
+
+Run `pnpm i` to install dependencies, then `pnpm dev` to start the development server. You can access the site at `http://localhost:3000`.
+
+`pnpm exec prisma studio` can be used to open Prisma studio, where you can view and edit the database.

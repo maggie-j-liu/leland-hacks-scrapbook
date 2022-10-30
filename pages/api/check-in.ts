@@ -9,9 +9,7 @@ export default async function handler(
     res.status(405).send("Method not allowed");
     return;
   }
-  if (
-    req.headers.authorization !== `Bearer ${process.env.GOOGLE_FORMS_TOKEN}`
-  ) {
+  if (req.headers.authorization !== `Bearer ${process.env.CHECK_IN_SECRET}`) {
     res.status(401).send("Unauthorized");
     return;
   }
